@@ -1,120 +1,131 @@
+#ifndef VEC3.HPP
+#define VEC3.HPP
+
 //code by Ameya Vikrama Singh
 #include<iostream>
 #include<cmath>
 class vec3{
+    float x,y,z;
     public:
-        float x,y,z;
-
-        vec3(){
-            x=y=z=0;
-        }
+        vec3() : x{0},y{0},z{0}{}
 
         //Cartesian coordinate Constructor
-        vec3(float x,float y,float z){
-            this->x=x;
-            this->y=y;
-            this->z=z;
-        }
-        
-        //assignment operator
-        void operator=(vec3 s){
-            x=s.x;
-            y=s.y;
-            z=s.z;
-        }
+        vec3(float X,float Y,float Z) : x{X}, y{Y}, z{Z}{}
 
         //norm function
-        float norm(){
+        constexpr float norm() const{
             return sqrt(x*x+y*y+z*z);
         }
 
         //vector addition
-        vec3 operator+(vec3 s){
-            vec3 sum;
-            sum.x=s.x+x;
-            sum.y=s.y+y;
-            sum.z=s.z+z;
-            return sum;
-        }
+        friend vec3 operator+(vec3 const& h, vec3 const & s);
 
         //vector subtraction
-        vec3 operator-(vec3 s){
-            vec3 diff;
-            diff.x=x-s.x;
-            diff.y=y-s.y;
-            diff.z=z-s.z;
-            return diff;
-        }
+        friend vec3 operator-(vec3 const& h, vec3 const & s);
+
+        //scalar post-multiplication
+        friend vec3 operator*(vec3 const& h, float const & s);
+
+        //scalar post-division
+        friend vec3 operator/(vec3 const& h, float const & s);
+
 
         //addition+assignemnt
-        void operator+=(vec3 s){
+        vec3& operator+=(vec3 const & s){
             x+=s.x;
             y+=s.y;
             z+=s.z;
+            return *this;
         }
 
         //subtraction+assignemnt
-        void operator-=(vec3 s){
+        vec3& operator-=(vec3 const & s){
             x-=s.x;
             y-=s.y;
             z-=s.z;
-        }
-
-        //scalar post-multiplication
-        vec3 operator*(float s){
-            vec3 prod;
-            prod.x=s*x;
-            prod.y=s*y;
-            prod.z=s*z;
-            return prod;
-        }
-
-        //scalar post-division
-        vec3 operator/(float s){
-            return *this*(1/s);
-        }
-
+            return *this;
+        } 
+    
         //scalar multiplication+assignment
-        void operator*=(float s){
+        vec3& operator*=(float const& s){
             x*=s;
             y*=s;
             z*=s;
+            return *this;
+        }
+
+        //scalar division+assignment
+        vec3& operator/=(float const & s){
+            x/=s;
+            y/=s;
+            z/=s;
+            return *this;
+        }
+
+        //unary unit vector operator(not to confuse with -1 * a)
+        vec3 operator-() const{
+            return *this/norm();
         }
 
         //dot product
-        float operator*(vec3 s){
-            return x*s.x+y*s.y+z*s.z;
-        }
+        friend float dot(vec3 const& h, vec3 const& s);
 
-        //cross product, but dk which operator to use
-        vec3 cross(vec3 s){
-            vec3 cross;
-            cross.x=y*s.z-z*s.y;
-            cross.y=z*s.x-x*s.z;
-            cross.z=x*s.y-y*s.x;
-            return cross;
-        }
+        //cross product
+        friend vec3 cross(vec3 const& h, vec3 const& s);
 
         //angle between vectors, in radians
-        float angle(vec3 s){
-            float cos=(*this*s)/(norm()*s.norm());
-            return acos(cos);
-        }
+        friend float angle(vec3 const& h, vec3 const& s);
 
-        //projection of this on s
-        vec3 proj(vec3 s){
-            return s*(*this*s)/(s.norm()*s.norm());                       
-        }
+        //projection of h on s
+        friend vec3 proj(vec3 const& h, vec3 const& s);
 
         //perpendicular projection
-        vec3 perp(vec3 s){
-            return *this - this->proj(s);
-        }
+        friend vec3 perp(vec3 const& h, vec3 const& s);
 
-        //print the vector
-        void print(){
-            std::cout<<"("<<x<<","<<y<<","<<z<<")\n";
-        }
+        friend std::ostream& operator<<(std::ostream& out, const vec3& vect);
 
 };
 
+vec3 operator+(vec3 const& h, vec3 const & s){
+            return {s.x+h.x, s.y+h.y, s.z+h.z};
+        }
+
+vec3 operator-(vec3 const& h, vec3 const & s){
+            return {h.x-s.x,h.y-s.y,h.z-s.z};
+        }
+
+vec3 operator*(vec3 const& h, float const & s){
+            return {s*h.x,s*h.y,s*h.z};
+        }
+
+vec3 operator/(vec3 const& h, float const & s){
+            return h*(1/s);
+        }
+
+float dot(vec3 const& h, vec3 const& s){
+            return h.x*s.x+h.y*s.y+h.z*s.z;
+        }
+
+vec3 cross(vec3 const& h, vec3 const& s){
+            return {h.y*s.z-h.z*s.y, h.z*s.x-h.x*s.z, h.x*s.y-h.y*s.x };
+        }
+
+float angle(vec3 const& h, vec3 const& s){
+            float cos=(dot(h,s))/(h.norm()*s.norm());
+            return acos(cos);
+        }
+
+vec3 proj(vec3 const& h, vec3 const& s){
+            return s*(dot(h,s))/(s.norm()*s.norm());                       
+        }
+
+vec3 perp(vec3 const& h, vec3 const& s){
+            return h - proj(h,s);
+        }
+
+std::ostream& operator<<(std::ostream& out, const vec3& vect){
+            out<<"("<<vect.x<<","<<vect.y<<","<<vect.z<<")\n";
+            return out;
+        }
+
+#endif
