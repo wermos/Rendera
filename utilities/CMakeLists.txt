@@ -10,9 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # add xsimd
 add_subdirectory(libs/xsimd)
 
-file(GLOB_RECURSE SOURCES
-	CONFIGURE_DEPENDS
-	src/*.cpp)
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp)
 
 add_library(utilities ${SOURCES})
 
