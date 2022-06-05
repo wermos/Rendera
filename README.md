@@ -16,7 +16,6 @@ This project was made as a part of the Seasons of Code (SoC) initiative by the W
 To build the project and run locally,
 
 ```bash
-    mkdir build
     cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release
     cmake --build build
     ./build/Rendera/Rendera
