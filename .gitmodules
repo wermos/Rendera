@@ -1,3 +1,4 @@
 [submodule "utilities/libs/xsimd"]
 	path = utilities/libs/xsimd
 	url = https://github.com/xtensor-stack/xsimd.git
+	branch = 8.1.0
