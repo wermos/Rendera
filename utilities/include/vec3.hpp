@@ -18,118 +18,118 @@ class vec3{
         }
 
         //unit vector function
-        vec3 unit(){
+        constexpr vec3 unit(){
             return *this/this->norm();
         }
 
         //vector addition
-        friend vec3 operator+(const vec3& h, const vec3& s);
+        friend constexpr vec3 operator+(const vec3& h, const vec3& s);
 
         //vector subtraction
-        friend vec3 operator-(const vec3& h, const vec3& s);
+        friend constexpr vec3 operator-(const vec3& h, const vec3& s);
 
         //scalar post-multiplication
-        friend vec3 operator*(const vec3& h, const float& s);
+        friend constexpr vec3 operator*(const vec3& h, const float& s);
 
         //scalar pre-multiplication
-        friend vec3 operator*(const float& s, const vec3& h);
+        friend constexpr vec3 operator*(const float& s, const vec3& h);
 
         //scalar post-division
-        friend vec3 operator/(const vec3& h, const float& s);
+        friend constexpr vec3 operator/(const vec3& h, const float& s);
 
         //addition+assignemnt
-        friend vec3& operator+=(vec3 &h, const vec3& s);
+        friend constexpr vec3& operator+=(vec3 &h, const vec3& s);
         
         //subtraction+assignemnt
-        friend vec3& operator-=(vec3 &h, const vec3& s);
+        friend constexpr vec3& operator-=(vec3 &h, const vec3& s);
     
         //scalar multiplication+assignment
-        friend vec3& operator*=(vec3& h, const float& s);
+        friend constexpr vec3& operator*=(vec3& h, const float& s);
         
         //scalar division+assignment
-        friend vec3& operator/=(vec3& h, const float& s);
+        friend constexpr vec3& operator/=(vec3& h, const float& s);
 
         //negation operator 
-        friend vec3 operator-(const vec3& h);
+        friend constexpr vec3 operator-(const vec3& h);
 
         //dot product
         friend constexpr float dot(const vec3& h, const vec3& s);
 
         //cross product
-        friend vec3 cross(const vec3& h, const vec3& s);
+        friend constexpr vec3 cross(const vec3& h, const vec3& s);
 
         //angle between vectors, in radians
         friend constexpr float angle(const vec3& h, const vec3& s);
 
         //projection of h on s
-        friend vec3 proj(const vec3& h, const vec3& s);
+        friend constexpr vec3 proj(const vec3& h, const vec3& s);
 
         //perpendicular projection
-        friend vec3 perp(const vec3& h, const vec3& s);
+        friend constexpr vec3 perp(const vec3& h, const vec3& s);
 
     
         friend std::ostream& operator<<(std::ostream& out, const vec3& vect);
 
 };
 
-vec3 operator+(const vec3& h, const vec3& s){
+constexpr vec3 operator+(const vec3& h, const vec3& s){
             vec3 copy = h;
             copy += s;
             return copy;
 
         }
 
-vec3 operator-(const vec3& h, const vec3& s){
+constexpr vec3 operator-(const vec3& h, const vec3& s){
             vec3 copy = h;
             copy -= s;
             return copy;
         }
 
-vec3 operator*(const vec3& h, const float& s){
+constexpr vec3 operator*(const vec3& h, const float& s){
             vec3 copy = h;
             copy *= s;
             return copy;
         }
 
-vec3 operator*(const float& s, const vec3& h){
+constexpr vec3 operator*(const float& s, const vec3& h){
             return h*s;
 }
 
-vec3 operator/(const vec3& h, const float& s){
+constexpr vec3 operator/(const vec3& h, const float& s){
             vec3 copy = h;
             copy /= s;
             return copy;
         }
 
-vec3& operator+=(vec3& h, const vec3& s){
+constexpr vec3& operator+=(vec3& h, const vec3& s){
             h.x+=s.x;
             h.y+=s.y;
             h.z+=s.z;
             return h;
         }
 
-vec3& operator-=(vec3 &h, const vec3& s){
+constexpr vec3& operator-=(vec3 &h, const vec3& s){
             h.x-=s.x;
             h.y-=s.y;
             h.z-=s.z;
             return h;
         }
 
-vec3& operator*=(vec3& h, const float& s){
+constexpr vec3& operator*=(vec3& h, const float& s){
             h.x*=s;
             h.y*=s;
             h.z*=s;
             return h;
         }
 
-vec3& operator/=(vec3& h, const float& s){
+constexpr vec3& operator/=(vec3& h, const float& s){
             h.x/=s;
             h.y/=s;
             h.z/=s;
             return h;
         }
 
-vec3 operator-(const vec3& h) {
+constexpr vec3 operator-(const vec3& h) {
             return h*(-1);
         }
 
@@ -137,7 +137,7 @@ constexpr float dot(const vec3& h, const vec3& s){
             return h.x*s.x+h.y*s.y+h.z*s.z;
         }
 
-vec3 cross(const vec3& h, const vec3& s){
+constexpr vec3 cross(const vec3& h, const vec3& s){
             return {h.y*s.z-h.z*s.y, h.z*s.x-h.x*s.z, h.x*s.y-h.y*s.x };
         }
 
@@ -146,11 +146,11 @@ constexpr float angle(const vec3& h, const vec3& s){
             return acos(cos);
         }
 
-vec3 proj(const vec3& h, const vec3& s){
+constexpr vec3 proj(const vec3& h, const vec3& s){
             return s*(dot(h,s))/(s.norm()*s.norm());                       
         }
 
-vec3 perp(const vec3& h, const vec3& s){
+constexpr vec3 perp(const vec3& h, const vec3& s){
             return h - proj(h,s);
         }
 
