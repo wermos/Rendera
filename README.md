@@ -1,6 +1,6 @@
 Rendera
 ====
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Windows](https://github.com/wermos/Rendera/actions/workflows/windows.yml/badge.svg)](https://github.com/wermos/Rendera/actions/workflows/windows.yml) [![Linux](https://github.com/wermos/Rendera/actions/workflows/linux.yml/badge.svg)](https://github.com/wermos/Rendera/actions/workflows/linux.yml)
 
 A raytracing engine written in C++17.
 
