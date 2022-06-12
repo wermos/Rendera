@@ -7,10 +7,10 @@
 class vec3{
     float x,y,z;
     public:
-        vec3() : x {0}, y {0}, z {0} {}
+        constexpr vec3() : x {0}, y {0}, z {0} {}
 
         //Cartesian coordinate Constructor
-        vec3(float X,float Y,float Z) : x {X}, y {Y}, z {Z} {}
+        constexpr vec3(float X,float Y,float Z) : x {X}, y {Y}, z {Z} {}
 
         //norm function
         constexpr float norm() const {
@@ -18,7 +18,7 @@ class vec3{
         }
 
         //unit vector function
-        constexpr vec3 unit(){
+        constexpr vec3 unit() const{
             return *this/this->norm();
         }
 
