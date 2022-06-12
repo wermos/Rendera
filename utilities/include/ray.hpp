@@ -15,15 +15,15 @@ class ray{
 
     public:
         //Constructors
-        ray() : origin {vec3(0,0,0)}, direction {vec3(1,0,0)} {}
-        ray(vec3 Origin, vec3 Direction) : origin {Origin} , direction {Direction.unit()} {}
+        constexpr ray() : origin {vec3(0,0,0)}, direction {vec3(1,0,0)} {}
+        constexpr ray(vec3 Origin, vec3 Direction) : origin {Origin} , direction {Direction.unit()} {}
 
         //fetch point at distance from point along ray, from origin by default
-        vec3 fetch(float distance, const vec3& point) const{
+        constexpr vec3 fetch(float distance, const vec3& point) const{
             return point + distance * direction;
         }
 
-        vec3 fetch(float distance) const{
+        constexpr vec3 fetch(float distance) const{
             return origin + distance * direction;
         }
 
