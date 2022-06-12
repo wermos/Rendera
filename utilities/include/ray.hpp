@@ -1,8 +1,7 @@
 #ifndef RAY_HPP
 #define RAY_HPP
 
-#include <iostream>
-#include <cmath>
+
 #include "vec3.hpp"
 
 float epsilon=0.0001;
@@ -27,18 +26,7 @@ class ray{
             return origin + distance * direction;
         }
 
-        //origin setter
-        vec3& Origin(const vec3& Origin){
-            origin = Origin;
-            return origin;
-        }
-
-        //direction setter, maintains unit magnitude for direction
-        vec3& Direction(const vec3& Direction){
-            direction = Direction.unit();
-            return direction;
-        }
-
+        //getters
         vec3 get_direction(){
             return direction;
         }

@@ -22,6 +22,19 @@ class vec3{
             return *this/this->norm();
         }
 
+        //getters
+        constexpr float get_X() const{
+            return x;
+        }
+
+        constexpr float get_Y() const{
+            return y;
+        }
+        
+        constexpr float get_Z() const{
+            return z;
+        }
+
         //vector addition
         friend constexpr vec3 operator+(const vec3& h, const vec3& s);
 
