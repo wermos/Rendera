@@ -37,7 +37,7 @@ class ray{
         
 
         //check for intersection between rays, dont use float equality
-        friend bool is_intersect(const ray& h, const ray& s);
+        friend bool is_intersecting(const ray& h, const ray& s);
 
         //return intersection point
         friend vec3 intersection(const ray& h, const ray& s);
