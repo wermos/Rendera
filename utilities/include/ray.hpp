@@ -44,7 +44,7 @@ class ray{
         
 };
 
-bool is_intersect(const ray& h, const ray& s){
+bool is_intersecting(const ray& h, const ray& s){
     if (dot((h.origin-s.origin), cross(h.direction,s.direction)) < epsilon){
         return true;
     }
