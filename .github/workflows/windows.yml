@@ -3,6 +3,8 @@ name: Windows
 on:
   push:
     branches: main
+  pull_request:
+    branches: main
 
 jobs:
   windows_vs2019:
