@@ -33,81 +33,81 @@ class color{
         //converts values
         friend constexpr color& float2int(color& c1);
 
-        friend constexpr color& int2float(color& h);
+        friend constexpr color& int2float(color& c1);
 
         //adding colors
-        friend constexpr color operator+(const color& h, const color& s);
+        friend constexpr color operator+(const color& c1, const color& c2);
 
         //multiplying colors(elementwise)
-        friend constexpr color operator*(const color& h, const color& s);
+        friend constexpr color operator*(const color& c1, const color& c2);
 
         //multiplying by scalar
-        friend constexpr color operator*(const color& h, const float& s);
-        friend constexpr color operator*(const float& s, const color& h);
+        friend constexpr color operator*(const color& c1, const float& s);
+        friend constexpr color operator*(const float& s, const color& c1);
 
         //compound assignments
-        friend constexpr color& operator+=(color& h, const color& s);
-        friend constexpr color& operator*=(color& h, const color& s);
-        friend constexpr color& operator*=(color& h, const float& s);
+        friend constexpr color& operator+=(color& c1, const color& c2);
+        friend constexpr color& operator*=(color& c1, const color& c2);
+        friend constexpr color& operator*=(color& c1, const float& s);
 };
 
-constexpr color& float2int(color& h){
-    h.r = int(255*h.r);
-    h.g = int(255*h.g);
-    h.b = int(255*h.b);
-    return h;
+constexpr color& float2int(color& c1){
+    c1.r = int(255*c1.r);
+    c1.g = int(255*c1.g);
+    c1.b = int(255*c1.b);
+    return c1;
 }
 
-constexpr color& int2float(color& h){
-    h.r /= 255.0;
-    h.g /= 255.0;
-    h.b /= 255.0;
-    return h;
+constexpr color& int2float(color& c1){
+    c1.r /= 255.0;
+    c1.g /= 255.0;
+    c1.b /= 255.0;
+    return c1;
 }
 
-constexpr color operator+(const color& h, const color& s){
-    color copy = h;
-    copy += s;
+constexpr color operator+(const color& c1, const color& c2){
+    color copy = c1;
+    copy += c2;
     return copy;
 }
 
-constexpr color operator*(const color& h, const color& s){
-    color copy = h;
+constexpr color operator*(const color& c1, const color& c2){
+    color copy = c1;
+    copy *= c2;
+    return copy;
+}
+
+constexpr color operator*(const color& c1, const float& c2){
+    color copy = c1;
+    copy *= c2;
+    return copy;
+}
+
+constexpr color operator*(const float& s, const color& c1){
+    color copy = c1;
     copy *= s;
     return copy;
 }
 
-constexpr color operator*(const color& h, const float& s){
-    color copy = h;
-    copy *= s;
-    return copy;
+constexpr color& operator+=(color& c1, const color& c2){
+    c1.r += c2.r;
+    c1.g += c2.g;
+    c1.b += c2.b;
+    return c1;
 }
 
-constexpr color operator*(const float& s, const color& h){
-    color copy = h;
-    copy *= s;
-    return copy;
+constexpr color& operator*=(color& c1, const color& c2){
+    c1.r *= c2.r;
+    c1.g *= c2.r;
+    c1.b *= c2.b;
+    return c1;
 }
 
-constexpr color& operator+=(color& h, const color& s){
-    h.r += s.r;
-    h.g += s.g;
-    h.b += s.b;
-    return h;
-}
-
-constexpr color& operator*=(color& h, const color& s){
-    h.r *= s.r;
-    h.g *= s.r;
-    h.b *= s.b;
-    return h;
-}
-
-constexpr color& operator*=(color& h, const float& s){
-    h.r *= s; 
-    h.g *= s;
-    h.b *= s;
-    return h;
+constexpr color& operator*=(color& c1, const float& s){
+    c1.r *= s; 
+    c1.g *= s;
+    c1.b *= s;
+    return c1;
 }
 
 

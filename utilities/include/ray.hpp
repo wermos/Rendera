@@ -37,29 +37,29 @@ class ray{
         
 
         //check for intersection between rays, dont use float equality
-        friend bool is_intersecting(const ray& h, const ray& s);
+        friend bool is_intersecting(const ray& ray1, const ray& ray2);
 
         //return intersection point
-        friend vec3 intersection(const ray& h, const ray& s);
+        friend vec3 intersection(const ray& ray1, const ray& ray2);
         
 };
 
-bool is_intersecting(const ray& h, const ray& s){
-    if (dot((h.origin-s.origin), cross(h.direction,s.direction)) < epsilon){
+bool is_intersecting(const ray& ray1, const ray& ray2){
+    if (abs(dot((ray1.origin-ray2.origin), cross(ray1.direction,ray2.direction))) < epsilon){
         return true;
     }
 
     return false;
 }
 
-vec3 intersection(const ray& h, const ray& s){
-    vec3 g = h.origin - s.origin;
-    vec3 v1 = cross(g, s.direction);
-    vec3 v2 = cross(h.direction,s.direction);
+vec3 intersection(const ray& ray1, const ray& ray2){
+    vec3 g = ray1.origin - ray1.origin;
+    vec3 v1 = cross(g, ray2.direction);
+    vec3 v2 = cross(ray1.direction,ray2.direction);
     float a = v1.norm();
     float b = v2.norm();
     float sign = dot(v1,v2) > 0 ? 1 : -1;
-    return h.fetch(sign*a/b);
+    return ray1.fetch(sign*a/b);
 
 }
 
