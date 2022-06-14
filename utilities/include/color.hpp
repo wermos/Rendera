@@ -27,7 +27,7 @@ class color{
 
         //return 8 bit int values
         constexpr color get_int() const{
-            return {int(255*r), int(255*g), int(255*b)};
+            return {static_cast<int> (255*r), static_cast<int> (255*g), static_cast<int> (255*b)};
         }
 
         //converts values
@@ -52,9 +52,9 @@ class color{
 };
 
 constexpr color& float2int(color& c1){
-    c1.r = int(255*c1.r);
-    c1.g = int(255*c1.g);
-    c1.b = int(255*c1.b);
+    c1.r = static_cast<int> (255*c1.r);
+    c1.g = static_cast<int> (255*c1.g);
+    c1.b = static_cast<int> (255*c1.b);
     return c1;
 }
 
