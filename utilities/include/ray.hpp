@@ -1,8 +1,7 @@
 #ifndef RAY_HPP
 #define RAY_HPP
 
-#include <iostream>
-#include <cmath>
+
 #include "vec3.hpp"
 
 float epsilon=0.0001;
@@ -15,30 +14,19 @@ class ray{
 
     public:
         //Constructors
-        ray() : origin {vec3(0,0,0)}, direction {vec3(1,0,0)} {}
-        ray(vec3 Origin, vec3 Direction) : origin {Origin} , direction {Direction.unit()} {}
+        constexpr ray() : origin {vec3(0,0,0)}, direction {vec3(1,0,0)} {}
+        constexpr ray(vec3 Origin, vec3 Direction) : origin {Origin} , direction {Direction.unit()} {}
 
         //fetch point at distance from point along ray, from origin by default
-        vec3 fetch(float distance, const vec3& point) const{
+        constexpr vec3 fetch(float distance, const vec3& point) const{
             return point + distance * direction;
         }
 
-        vec3 fetch(float distance) const{
+        constexpr vec3 fetch(float distance) const{
             return origin + distance * direction;
         }
 
-        //origin setter
-        vec3& Origin(const vec3& Origin){
-            origin = Origin;
-            return origin;
-        }
-
-        //direction setter, maintains unit magnitude for direction
-        vec3& Direction(const vec3& Direction){
-            direction = Direction.unit();
-            return direction;
-        }
-
+        //getters
         vec3 get_direction(){
             return direction;
         }
@@ -49,29 +37,29 @@ class ray{
         
 
         //check for intersection between rays, dont use float equality
-        friend bool is_intersect(const ray& h, const ray& s);
+        friend bool is_intersecting(const ray& ray1, const ray& ray2);
 
         //return intersection point
-        friend vec3 intersection(const ray& h, const ray& s);
+        friend vec3 intersection(const ray& ray1, const ray& ray2);
         
 };
 
-bool is_intersect(const ray& h, const ray& s){
-    if (dot((h.origin-s.origin), cross(h.direction,s.direction)) < epsilon){
+bool is_intersecting(const ray& ray1, const ray& ray2){
+    if (abs(dot((ray1.origin-ray2.origin), cross(ray1.direction,ray2.direction))) < epsilon){
         return true;
     }
 
     return false;
 }
 
-vec3 intersection(const ray& h, const ray& s){
-    vec3 g = h.origin - s.origin;
-    vec3 v1 = cross(g, s.direction);
-    vec3 v2 = cross(h.direction,s.direction);
+vec3 intersection(const ray& ray1, const ray& ray2){
+    vec3 g = ray1.origin - ray1.origin;
+    vec3 v1 = cross(g, ray2.direction);
+    vec3 v2 = cross(ray1.direction,ray2.direction);
     float a = v1.norm();
     float b = v2.norm();
     float sign = dot(v1,v2) > 0 ? 1 : -1;
-    return h.fetch(sign*a/b);
+    return ray1.fetch(sign*a/b);
 
 }
 
