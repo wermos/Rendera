@@ -6,8 +6,8 @@ A raytracing engine written in C++17.
 
 This project was made as a part of the Seasons of Code (SoC) initiative by the WnCC Club at IITB.
 
->Note: The project uses some libraries which are added as submodules. To clone this project and build locally,
-
+> **Note**
+> The project uses some libraries which are added as submodules, to clone this project use
 
 ```bash
     git clone --recurse-submodules https://github.com/wermos/Rendera.git
