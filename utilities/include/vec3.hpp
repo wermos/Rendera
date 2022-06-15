@@ -13,7 +13,7 @@ class vec3{
         constexpr vec3(float X,float Y,float Z) : x {X}, y {Y}, z {Z} {}
 
         //norm function
-        #ifdef _MSC_VER
+        #ifndef __GNUC__
 
         float norm() const {
             return sqrt(x * x + y * y + z * z);
@@ -86,7 +86,7 @@ class vec3{
         friend constexpr vec3 cross(const vec3& v1, const vec3& v2);
 
         //angle between vectors, in radians
-        #ifdef _MSC_VER
+        #ifndef __GNUC__ 
 
         friend float angle(const vec3& v1, const vec3& v2);
 
@@ -178,7 +178,7 @@ constexpr vec3 cross(const vec3& v1, const vec3& v2){
     return {v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x };
 }
 
-#ifdef _MSC_VER
+#ifndef __GNUC__
 
 float angle(const vec3& v1, const vec3& v2){
     float cos=(dot(v1,v2))/(v1.norm()*v2.norm());
