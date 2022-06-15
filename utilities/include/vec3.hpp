@@ -3,7 +3,7 @@
 
 
 #include <iostream>
-#include <cmath>
+#include <cmath> //constexpr is compiler specific
 class vec3{
     float x,y,z;
     public:
@@ -13,9 +13,23 @@ class vec3{
         constexpr vec3(float X,float Y,float Z) : x {X}, y {Y}, z {Z} {}
 
         //norm function
+        #ifdef _MSC_VER
+
+        float norm() const {
+            return sqrt(x * x + y * y + z * z);
+        }
+
+        #endif
+
+        #ifdef __GNUC__
+        
         constexpr float norm() const {
             return sqrt(x * x + y * y + z * z);
         }
+
+        #endif
+
+
 
         //unit vector function
         constexpr vec3 unit() const{
@@ -72,7 +86,17 @@ class vec3{
         friend constexpr vec3 cross(const vec3& v1, const vec3& v2);
 
         //angle between vectors, in radians
+        #ifdef _MSC_VER
+
+        friend float angle(const vec3& v1, const vec3& v2);
+
+        #endif
+        
+        #ifdef __GNUC__
+
         friend constexpr float angle(const vec3& v1, const vec3& v2);
+
+        #endif
 
         //projection of h on s
         friend constexpr vec3 proj(const vec3& v1, const vec3& v2);
@@ -154,10 +178,23 @@ constexpr vec3 cross(const vec3& v1, const vec3& v2){
     return {v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x };
 }
 
+#ifdef _MSC_VER
+
+float angle(const vec3& v1, const vec3& v2){
+    float cos=(dot(v1,v2))/(v1.norm()*v2.norm());
+    return acos(cos);
+}
+
+#endif
+
+#ifdef __GNUC__
+
 constexpr float angle(const vec3& v1, const vec3& v2){
     float cos=(dot(v1,v2))/(v1.norm()*v2.norm());
     return acos(cos);
 }
+
+#endif
 
 constexpr vec3 proj(const vec3& v1, const vec3& v2){
     return v2*(dot(v1,v2))/(v2.norm()*v2.norm());                       
