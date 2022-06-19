@@ -45,6 +45,10 @@ class ray{
 };
 
 bool is_intersecting(const ray& ray1, const ray& ray2){
+    //check for parallelism
+    if(cross(ray1.direction, ray2.direction).norm() < epsilon){
+        return false;
+    }
     if (abs(dot((ray1.origin-ray2.origin), cross(ray1.direction,ray2.direction))) < epsilon){
         return true;
     }
