@@ -41,6 +41,9 @@ class ray{
 
         //return intersection point
         friend vec3 intersection(const ray& ray1, const ray& ray2);
+
+        //returns reflected ray (outward facing normal with origin at incident point)) 
+        friend ray reflect(const ray& incRay, const ray& normal);
         
 };
 
@@ -65,6 +68,11 @@ vec3 intersection(const ray& ray1, const ray& ray2){
     float sign = dot(v1,v2) > 0 ? 1 : -1;
     return ray1.fetch(sign*a/b);
 
+}
+
+ray reflect(const ray& incRay, const ray& normal){
+    vec3 r = incRay.direction - 2*dot(incRay.direction, normal.direction)*normal.direction;
+    return ray(normal.origin, r);
 }
 
 #endif
