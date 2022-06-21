@@ -1,14 +1,12 @@
 #ifndef VEC4_HPP
 #define VEC4_HPP
 
-#include <iostream>
+#include <ostream>
 #include <cmath>
-#define ALPHA_ 0
-//include alpha channel into calculations?
+#include <xsimd/xsimd.hpp>
+
+#define ALPHA_ 0 //include alpha or not.
 #define ALIGN_WIDTH 32
-//currently aligned for double and avx
-//create macros for alignas func. set to 32. <double,xsimd::avx>
-// CREATE A MACRO FOR __GNUC__
 
 template<class T, class A = xsimd::default_arch>
 class alignas(ALIGN_WIDTH) vec4{
@@ -115,7 +113,8 @@ class alignas(ALIGN_WIDTH) vec4{
         constexpr T operator[](int i){
             return m_v[i];
         }
-
+        
+        //print the vector
         friend std::ostream& operator<<(std::ostream& out, const vec4& v) {
 			out <<"("<< v.m_v[0] << "," << v.m_v[1] << "," << v.m_v[2]<<"," << v.m_v[3]<<")";
 			return out;
@@ -133,14 +132,11 @@ class alignas(ALIGN_WIDTH) vec4{
             return v;
         }
 
-        //how to handle garbage values
         static constexpr T sum(xsimd::batch<T,A> x){
             return xsimd::batch<T,A>::hadd(x);
         }
     
 
 };
-
-//overload [] operator
 
 #endif
