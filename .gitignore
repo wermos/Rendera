@@ -33,3 +33,4 @@
 
 # Build-related artifacts.
 build/
+.vscode/
