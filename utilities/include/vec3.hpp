@@ -37,15 +37,15 @@ class vec3{
         }
 
         //getters
-        constexpr float get_X() const{
+        constexpr float X() const{
             return x;
         }
 
-        constexpr float get_Y() const{
+        constexpr float Y() const{
             return y;
         }
         
-        constexpr float get_Z() const{
+        constexpr float Z() const{
             return z;
         }
 
