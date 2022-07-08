@@ -34,4 +34,6 @@
 # Build-related artifacts.
 build/
 .vscode/
-sphere.ppm
+
+# output testing Image files
+*.ppm
