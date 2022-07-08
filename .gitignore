@@ -34,3 +34,4 @@
 # Build-related artifacts.
 build/
 .vscode/
+sphere.ppm
