@@ -34,3 +34,6 @@
 # Build-related artifacts.
 build/
 .vscode/
+
+# output testing Image files
+*.ppm

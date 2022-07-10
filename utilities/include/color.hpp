@@ -27,7 +27,10 @@ class color{
 
         //return 8 bit int values
         constexpr color get_int() const{
-            return {static_cast<int> (255*r), static_cast<int> (255*g), static_cast<int> (255*b)};
+            int R = (r > 1.0) ? 255 : std::max(0, static_cast<int>(255*r));
+            int B = (b > 1.0) ? 255 : std::max(0, static_cast<int>(255*b));
+            int G = (g > 1.0) ? 255 : std::max(0, static_cast<int>(255*g));
+            return {R, G, B};
         }
 
         //converts values

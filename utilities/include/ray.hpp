@@ -27,11 +27,11 @@ class ray{
         }
 
         //getters
-        vec3 get_direction(){
+        vec3 get_direction() const{
             return direction;
         }
 
-        vec3 get_origin(){
+        vec3 get_origin() const{
             return origin;
         }
         
