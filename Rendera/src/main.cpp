@@ -1,9 +1,9 @@
-#include "../include/vec3.hpp"
-#include "../include/ray.hpp"
-#include "../include/color.hpp"
-#include "../include/camera.hpp"
-#include "../include/sphere.hpp"
-#include "../include/intersection.hpp"
+#include "vec3.hpp"
+#include "ray.hpp"
+#include "color.hpp"
+#include "camera.hpp"
+#include "sphere.hpp"
+#include "intersection.hpp"
 #include <fstream>
 #include <cmath>
 
