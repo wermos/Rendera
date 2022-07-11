@@ -43,6 +43,7 @@ color lighting(Material mat, ray cam_ray, ray normal, vec3 point, vec3 light_src
 
 int main(){
     
+    
     vec3 center = {5,0,0};
     color blue = {1,0.2, 1};
     Material mat_1 ={blue, 0.1, 1, 0.9, 200};
@@ -71,24 +72,29 @@ int main(){
         for(int j=0; j<img_width; j++){
 
             //process each ray
+            color shade;
+            for(int sample=0; sample<50; sample++){
+                ray ray_1 = cam.get_ray(j,i);
 
-            ray ray_1 = cam.get_ray(j,i);
+                Intersection i;
+                bool hits = i.hit(s,ray_1);
+                color temp_shade = {1,1,1};
+                
+                
+                if(hits){
 
-            Intersection i;
-            bool hits = i.hit(s,ray_1);
+                    vec3 hit_point = ray_1.fetch(i.dist_1()); 
+                    temp_shade = lighting(s.mat(), ray_1, s.normal(hit_point),hit_point,light_src, light_col);
+                }
 
-            vec3 hit_point = ray_1.fetch(i.dist_1()); 
-            color shade = lighting(s.mat(), ray_1, s.normal(hit_point),hit_point,light_src, light_col).get_int();
+                if(sample==0){shade = temp_shade;}
+                shade = (shade*(sample) + temp_shade)* (1.0/(sample+1));
+
+            }
+            shade = shade.get_int();
 
             //print result
-            if(hits){
-                image << shade.get_R() << " " << shade.get_G() << " " << shade.get_B()<<" " ;
-                //std::cout<< shade.get_R()<<" ";
-            }
-
-            else{
-                image << "255 255 255 ";
-            }
+            image << shade.get_R() << " " << shade.get_G() << " " << shade.get_B()<<" " ;
         }
     }
 
