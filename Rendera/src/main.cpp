@@ -6,6 +6,7 @@
 #include "intersection.hpp"
 #include <fstream>
 #include <cmath>
+#include <random>
 
 color lighting(Material mat, ray cam_ray, ray normal, vec3 point, vec3 light_src, color intensity){
 
@@ -42,11 +43,17 @@ color lighting(Material mat, ray cam_ray, ray normal, vec3 point, vec3 light_src
 }
 
 int main(){
-    
+    //initialise a random number generator
+    std::minstd_rand random;
+
     vec3 center = {5,0,0};
+<<<<<<< HEAD
 
     color blue = {0.2,0.2, 1};
 
+=======
+    color blue = {0.2,0.2, 1};
+>>>>>>> Anti Aliasing
     Material mat_1 ={blue, 0.1, 1, 0.9, 200};
     sphere s(center,4, mat_1);
 
@@ -73,24 +80,30 @@ int main(){
         for(int j=0; j<img_width; j++){
 
             //process each ray
+            color shade;
+            for(int sample=0; sample<50; sample++){
 
-            ray ray_1 = cam.get_ray(j,i);
+                ray ray_1 = cam.get_ray(j,i,random);
 
-            Intersection i;
-            bool hits = i.hit(s,ray_1);
+                Intersection i;
+                bool hits = i.hit(s,ray_1);
+                color temp_shade = {1,1,1};
+                
+                
+                if(hits){
 
-            vec3 hit_point = ray_1.fetch(i.dist_1()); 
-            color shade = lighting(s.mat(), ray_1, s.normal(hit_point),hit_point,light_src, light_col).get_int();
+                    vec3 hit_point = ray_1.fetch(i.dist_1()); 
+                    temp_shade = lighting(s.mat(), ray_1, s.normal(hit_point),hit_point,light_src, light_col);
+                }
+
+                if(sample==0){shade = temp_shade;}
+                shade = (shade*(sample) + temp_shade)* (1.0/(sample+1));
+
+            }
+            shade = shade.get_int();
 
             //print result
-            if(hits){
-                image << shade.get_R() << " " << shade.get_G() << " " << shade.get_B()<<" " ;
-                //std::cout<< shade.get_R()<<" ";
-            }
-
-            else{
-                image << "255 255 255 ";
-            }
+            image << shade.get_R() << " " << shade.get_G() << " " << shade.get_B()<<" " ;
         }
     }
 
