@@ -7,6 +7,7 @@
 
 class Camera{
     
+
     
     vec3 origin;
     float port_width;
@@ -15,6 +16,9 @@ class Camera{
     int img_height;
     float focal_length;
     //viewport screen at (x = focal_length) (viewing direction is +X)
+
+    //random number generator member
+    std::minstd_rand random;
     
     public:
 
@@ -27,7 +31,7 @@ class Camera{
             focal_length {Focal_length} {}
         
         //returns the ray corresponding to (x,y) on the image
-        ray get_ray(int x, int y, std::minstd_rand &random) const{
+        ray get_ray(int x, int y){
 
             //random number between -0.5 and 0.5 for distribution raytracing
             float random_x = static_cast<float>(random())/random.modulus;

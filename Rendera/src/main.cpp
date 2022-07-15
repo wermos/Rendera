@@ -43,8 +43,6 @@ color lighting(Material mat, ray cam_ray, ray normal, vec3 point, vec3 light_src
 }
 
 int main(){
-    //initialise a random number generator
-    std::minstd_rand random;
 
     vec3 center = {5,0,0};
     color blue = {0.2,0.2, 1};
@@ -77,7 +75,7 @@ int main(){
             color shade;
             for(int sample=0; sample<50; sample++){
 
-                ray ray_1 = cam.get_ray(j,i,random);
+                ray ray_1 = cam.get_ray(j,i);
 
                 Intersection i;
                 bool hits = i.hit(s,ray_1);
