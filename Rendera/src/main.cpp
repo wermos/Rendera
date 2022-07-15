@@ -47,13 +47,7 @@ int main(){
     std::minstd_rand random;
 
     vec3 center = {5,0,0};
-<<<<<<< HEAD
-
     color blue = {0.2,0.2, 1};
-
-=======
-    color blue = {0.2,0.2, 1};
->>>>>>> Anti Aliasing
     Material mat_1 ={blue, 0.1, 1, 0.9, 200};
     sphere s(center,4, mat_1);
 
