@@ -18,7 +18,7 @@ class Camera{
     //viewport screen at (x = focal_length) (viewing direction is +X)
 
     //random number generator member
-    std::minstd_rand random;
+    static std::minstd_rand random;
     
     public:
 
