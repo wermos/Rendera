@@ -12,7 +12,7 @@ class sphere{
     Material material;
 
     public:
-        sphere(vec3 Center, float Radius, Material mat): center {Center}, radius {Radius}, material {mat} {}
+        sphere(vec3 Center, float  Radius, Material mat): center {Center}, radius {Radius}, material {mat} {}
 
         //surface normal function, returns ray along outward normal
         ray normal(vec3 point){
