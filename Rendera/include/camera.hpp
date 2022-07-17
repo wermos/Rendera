@@ -16,7 +16,7 @@ class Camera{
     //viewport screen at (x = focal_length) (viewing direction is +X)
     
     public:
-
+        Camera(){}
         Camera(vec3 Origin, float p_width, float p_height, int i_width, int i_height, float Focal_length):
             origin {Origin},
             port_width {p_width},
