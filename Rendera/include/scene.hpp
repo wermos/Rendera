@@ -126,36 +126,20 @@ class Scene{
         }
 
         void next_depth(int x, int y){
-            // hitinfo[y*img_width + x].ray_ = hitinfo[y*img_width + x].ref_ray;
             for(int i = 0; i < n_sphere; i++){
                 if(hitinfo[y*img_width + x].ishitting){
                 Intersection i_;
                 bool hits = i_.hit(hitable_sphere[i], hitinfo[y*img_width + x].ref_ray);
                 if (hitinfo[y*img_width + x].ishitting && hits){
-                                    // std::cout<<hits;
-
                     if (hitinfo[y*img_width + x].dist > i_.dist_1()){
                         hitinfo[y*img_width + x].dist = i_.dist_1();
                         hitinfo[y*img_width + x].intersection_pt = hitinfo[y*img_width + x].ref_ray.fetch(hitinfo[y*img_width + x].dist); 
                         hitinfo[y*img_width + x].normal = hitable_sphere[i].normal(hitinfo[y*img_width + x].intersection_pt);
                         hitinfo[y*img_width + x].shade_new = lighting(hitable_sphere[i].mat(), hitinfo[y*img_width + x].ref_ray, hitinfo[y*img_width + x].normal, hitinfo[y*img_width + x].intersection_pt, light_src, light_col);
-                        // hitinfo[y*img_width + x].rgb = hitinfo[y*img_width + x].shade.get_int();
                         hitinfo[y*img_width + x].ref_ray = reflect(hitinfo[y*img_width + x].ray_, hitinfo[y*img_width + x].normal);
-
                         }
                 }
-                if (!hitinfo[y*img_width + x].ishitting && hits){
-                                    // std::cout<<hits;
-
-                    hitinfo[y*img_width + x].ishitting = true;
-                    hitinfo[y*img_width + x].dist = i_.dist_1();
-                    hitinfo[y*img_width + x].intersection_pt = hitinfo[y*img_width + x].ref_ray.fetch(hitinfo[y*img_width + x].dist); 
-                    hitinfo[y*img_width + x].normal = hitable_sphere[i].normal(hitinfo[y*img_width + x].intersection_pt);
-                    hitinfo[y*img_width + x].shade_new = lighting(hitable_sphere[i].mat(), hitinfo[y*img_width + x].ref_ray, hitinfo[y*img_width + x].normal, hitinfo[y*img_width + x].intersection_pt, light_src, light_col);
-                    // hitinfo[y*img_width + x].rgb = hitinfo[y*img_width + x].shade.get_int();
-                    hitinfo[y*img_width + x].ref_ray = reflect(hitinfo[y*img_width + x].ref_ray, hitinfo[y*img_width + x].normal);
-
-                }}
+                }
             }
         }
 
