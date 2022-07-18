@@ -28,6 +28,7 @@ struct indices
 
 
 
+
 class alignas(ALIGN_WIDTH) Vec3 : public Vec4{
 
     public:
