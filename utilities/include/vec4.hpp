@@ -8,6 +8,14 @@
 
 #include "config.hpp"
 
+/*  *Macros provided by config.hpp
+    - ALIGN_WIDTH: Alignment width for class, since it is dependent on Arch.
+    - UArch: Architecture to be used.
+    - UType: Data type to be used.
+    - CONSTEXPR_CMATH: Switch constexpr if available in cmath.
+*/
+
+
 class alignas(ALIGN_WIDTH) Vec4{
     
     public:
@@ -34,11 +42,11 @@ class alignas(ALIGN_WIDTH) Vec4{
         }
         
         //indexing operations
-        // constexpr Utype& operator[](std::size_t i) const{
-        //     return m_v[i];
-        // }
-        
-        constexpr Utype operator[](std::size_t i) const{
+        constexpr Utype& operator[](std::size_t i) const{
+            return m_v[i];
+        }
+
+        constexpr Utype& operator[](std::size_t i){
             return m_v[i];
         }
 
@@ -59,23 +67,23 @@ class alignas(ALIGN_WIDTH) Vec4{
             return *this/this->norm();
         }
 
-        // negation operator 
+        // Negation 
         friend constexpr Vec4 operator-(const Vec4& v1){
-            return batch2vec4(-vec2batch(v1));
+            return batch2vec(-vec2batch(v1));
         }
 
         // Addition and Substraction
         friend constexpr Vec4& operator+=(Vec4& v1, const Vec4& v2){
             xsimd::batch<Utype,UArch> b1 = vec2batch(v1);
             b1+=vec2batch(v2);
-            v1= batch2vec4(b1);
+            v1= batch2vec(b1);
             return v1;
         }
 
         friend constexpr Vec4 operator+(const Vec4& v1, const Vec4& v2){
-            Vec4 v1c = v1;
-            v1c+=v2;
-            return v1c;
+            Vec4 v1_copy = v1;
+            v1_copy+=v2;
+            return v1_copy;
         }
 
         friend constexpr Vec4 operator-(const Vec4& v1, const Vec4& v2){
@@ -89,23 +97,23 @@ class alignas(ALIGN_WIDTH) Vec4{
         // Scalar Multiplication and Division
         // scalar post-multiplications
         friend constexpr Vec4 operator*(const Vec4& v1, const Utype& s){
-            Vec4 v1c = v1;
-            v1c*=s;
-            return v1c;
+            Vec4 v1_copy = v1;
+            v1_copy*=s;
+            return v1_copy;
         }
 
         // scalar pre-multiplications
         friend constexpr Vec4 operator*(const Utype& s, const Vec4& v1){
             xsimd::batch<Utype,UArch> vs= xsimd::batch<Utype,UArch>::broadcast(s);
-            Vec4 v1c = v1;
-            v1c*=s;
-            return v1c;
+            Vec4 v1_copy = v1;
+            v1_copy*=s;
+            return v1_copy;
         }
 
         // scalar post-multiplication-assignment
         friend constexpr Vec4& operator*=(Vec4& v1, const Utype& s){
             xsimd::batch<Utype,UArch> vs= xsimd::batch<Utype,UArch>::broadcast(s);
-            v1  = batch2vec4(vec2batch(v1)*vs);
+            v1  = batch2vec(vec2batch(v1)*vs);
             return v1;
         }
         
@@ -120,12 +128,10 @@ class alignas(ALIGN_WIDTH) Vec4{
             return v1;
         }
 
-
         // print the vector
-        friend std::ostream& operator<<(std::ostream& out, const Vec4& v) {
-            
-			out <<'('<< v.m_v[0] << ',' << v.m_v[1] << ',' << v.m_v[2]<<','<< v.m_v[3]<<')';
-			return out;
+        friend std::ostream& operator<<(std::ostream& out, const Vec4& v) {            
+            out <<'('<< v.m_v[0] << ',' << v.m_v[1] << ',' << v.m_v[2]<<','<< v.m_v[3]<<')';
+            return out;
 		}
 	
     protected:
@@ -133,7 +139,7 @@ class alignas(ALIGN_WIDTH) Vec4{
             return  xsimd::batch<Utype,UArch>::load_aligned(v.m_v);
         }
         
-        static constexpr Vec4 batch2vec4(xsimd::batch<Utype,UArch> x){
+        static constexpr Vec4 batch2vec(xsimd::batch<Utype,UArch> x){
             Vec4 v{x};
             return v;
         }
