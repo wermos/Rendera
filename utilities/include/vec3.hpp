@@ -3,11 +3,9 @@
 
 #include <iostream>
 #include <cmath>
-#include "vec4.hpp"
 
-#define ALIGN_WIDTH 32
-typedef float Utype;
-typedef xsimd::sse4_2 UArch;
+#include "vec4.hpp"
+#include "config.hpp"
 
 template <class T>
 struct as_index

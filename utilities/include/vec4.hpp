@@ -6,9 +6,7 @@
 #include <cmath>
 #include <xsimd/xsimd.hpp>
 
-#define ALIGN_WIDTH 32
-typedef float Utype;
-typedef xsimd::sse4_2 UArch;
+#include "config.hpp"
 
 class alignas(ALIGN_WIDTH) Vec4{
     
@@ -50,14 +48,14 @@ class alignas(ALIGN_WIDTH) Vec4{
             return sum(temp);
         }
         
-        constexpr Utype norm() const{ //__GNUC__
+        CONSTEXPR_CMATH Utype norm() const{
             return sqrt(dot(*this));
         }
 
-        constexpr static Utype angle(const Vec4& v1,const Vec4& v2){//__GNUC__
+        CONSTEXPR_CMATH static Utype angle(const Vec4& v1,const Vec4& v2){
             return acos(v1.dot(v2)/(v1.norm()*v2.norm()));
         }
-        constexpr Vec4 unit() const{//__GNUC__
+        CONSTEXPR_CMATH Vec4 unit() const{
             return *this/this->norm();
         }
 
