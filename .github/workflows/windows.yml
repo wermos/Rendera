@@ -2,9 +2,9 @@ name: Windows
 
 on:
   push:
-    branches: main
+    branches: [ main, development ]
   pull_request:
-    branches: main
+    branches: [ main, development ]
 
 jobs:
   windows_vs2019:
