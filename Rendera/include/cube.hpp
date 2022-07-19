@@ -1,26 +1,15 @@
 #ifndef CUBE_HPP
 #define CUBE_HPP
 
+#include <limits>
 #include "vec3.hpp"
 #include "ray.hpp"
 #include "material.hpp"
 
-#define INFINITY 1E10
 
-struct HitInfo
+vec3 max(vec3 a, vec3 b, ray r)
 {
-    bool is_hitting;
-    vec3 intersection_point;
-    Material material;
-    ray Ray;
-    int recursion_depth;
-
-    HitInfo(bool is_hitting, vec3 intersection_point, Material material, ray Ray, int recursion_depth) : is_hitting{is_hitting}, intersection_point{intersection_point}, material{material}, Ray{Ray}, recursion_depth{recursion_depth} {}
-};
-
-HitInfo max(HitInfo a, HitInfo b, vec3 o)
-{
-    if ((a.intersection_point - o).norm() > (b.intersection_point - o).norm())
+    if (dot((a - r.get_origin()),r.get_direction()) > dot((b- r.get_origin()),r.get_direction()))
     {
         return a;
     }
@@ -30,10 +19,10 @@ HitInfo max(HitInfo a, HitInfo b, vec3 o)
     }
 }
 
-HitInfo min(HitInfo a, HitInfo b, vec3 o)
+vec3 min(vec3 a, vec3 b, ray r)
 {
 
-    if ((a.intersection_point - o).norm() < (b.intersection_point - o).norm())
+    if (dot((a - r.get_origin()),r.get_direction()) < dot((b- r.get_origin()),r.get_direction()))
     {
         return a;
     }
@@ -114,44 +103,9 @@ public:
         return ray(point, normal);
     }
 
-    Material mat() const
-    {
-        return m_material;
-    }
 
-    vec3 position() const
+    vec3 plane_intersect(const vec3 &n, const vec3 &p, const ray &r)
     {
-        return m_position;
-    }
-
-    vec3 a() const
-    {
-        return m_a;
-    }
-
-    vec3 b() const
-    {
-        return m_b;
-    }
-
-    vec3 c() const
-    {
-        return m_c;
-    }
-
-    HitInfo plane_intersect(const vec3 &n, const vec3 &p, const ray &r)
-    {
-        // if(dot(r.get_direction(),n) < 1e5 || dot(r.get_direction(),n) > -1e5){
-        //     return HitInfo(false, vec3(0,0,0), m_material, r, 0);
-        // }
-        // float t = dot(n,p - r.get_origin()) / dot(n,r.get_direction());
-        // if(t < 0){
-        //     return HitInfo(false, vec3(0,0,0), m_material, r, 0);
-        // }
-        // else{
-        //     return HitInfo(true, r.get_origin() + t * r.get_direction(), m_material, r, 0);
-        // }
-
         float num = dot(n, p - r.get_origin());
         if (abs(dot(r.get_direction(), n)) > 1e-5)
         {
@@ -159,50 +113,42 @@ public:
         }
         else
         {
-            num *= INFINITY;
+            num = num/abs(num);
+            num *= std::numeric_limits<float>::max();
         }
 
-        return HitInfo(true, r.get_origin() + num * r.get_direction(), m_material, r, 0);
+        return r.get_origin() + num * r.get_direction();
     }
 
     HitInfo hit(const ray &r, int recursion_depth)
     {
-        HitInfo hit_info(false, vec3(0, 0, 0), m_material, r, recursion_depth);
-        // hit_info.is_hitting = false;
-        // hit_info.recursion_depth = recursion_depth;
-        // hit_info.Ray = r;
-        // hit_info.material = m_material;
-
-
-        HitInfo temp_a = plane_intersect(cross(m_b, m_c), m_position, r), temp_b = plane_intersect(cross(m_b, m_c), m_position + m_a, r);
-        HitInfo amin = min(temp_a, temp_b, r.get_origin());
-        HitInfo amax = max(temp_a, temp_b, r.get_origin());
+        vec3 temp_a = plane_intersect(cross(m_b, m_c), m_position, r), temp_b = plane_intersect(cross(m_b, m_c), m_position + m_a, r);
+        vec3 amin = min(temp_a, temp_b, r);
+        vec3 amax = max(temp_a, temp_b, r);
 
         temp_a = plane_intersect(cross(m_a, m_c), m_position, r), temp_b = plane_intersect(cross(m_a, m_c), m_position + m_b, r);
-        amin = max(amin, min(temp_a, temp_b, r.get_origin()), r.get_origin());
-        amax = min(amax, max(temp_a, temp_b, r.get_origin()), r.get_origin());
+        amin = max(amin, min(temp_a, temp_b, r), r);
+        amax = min(amax, max(temp_a, temp_b, r), r);
 
         temp_a = plane_intersect(cross(m_a, m_b), m_position, r), temp_b = plane_intersect(cross(m_a, m_b), m_position + m_c, r);
-        amin = max(amin, min(temp_a, temp_b, r.get_origin()), r.get_origin());
-        amax = min(amax, max(temp_a, temp_b, r.get_origin()), r.get_origin());
+        amin = max(amin, min(temp_a, temp_b, r), r);
+        amax = min(amax, max(temp_a, temp_b, r), r);
 
-        if((amin.intersection_point-r.get_origin()).norm()>(amax.intersection_point-r.get_origin()).norm())
+        if(dot((amin-r.get_origin()),r.get_direction())>dot((amax-r.get_origin()),r.get_direction()))
         {
-            return hit_info;
+            return {false, vec3(0,0,0), m_material, r, recursion_depth};
         }
-        else if(dot(r.get_direction(),amax.intersection_point - r.get_origin())<0 )
+        else if(dot(r.get_direction(),amax - r.get_origin())<0 )
         {
-            return hit_info;
+            return {false, vec3(0,0,0), m_material, r, recursion_depth};
         }
-        else if(dot(r.get_direction(),amin.intersection_point - r.get_origin())<0)
+        else if(dot(r.get_direction(),amin - r.get_origin())<0)
         {
-            amax.is_hitting = true;
-            amax.recursion_depth = recursion_depth - 1;
-            return amax;
+            return {true, amax, m_material, r, recursion_depth-1};
         }
-        amin.is_hitting = true;
-        amin.recursion_depth = recursion_depth - 1;
-        return amin;
+        
+        return {true, amin, m_material, r, recursion_depth-1};
+        
     }
 };
 
