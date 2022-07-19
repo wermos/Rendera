@@ -9,8 +9,7 @@
 
 class alignas(ALIGN_WIDTH) Vec3 : public Vec4{
     
-    private:
-                
+    private:    
         /*
         structs as_index,indices are used to generate appropriate xsimd::batch_constant 
         to be used for xsimd::swizzle function used inside cross product. 
@@ -28,11 +27,6 @@ class alignas(ALIGN_WIDTH) Vec3 : public Vec4{
                 else return (i+1)%(n-1);
             }
         };
-
-        static constexpr Vec3 batch2vec3(xsimd::batch<Utype,UArch> x){
-            Vec3 v{x};
-            return v;
-        }
 
     public:
         constexpr Vec3(Utype x,Utype y,Utype z) : Vec4{x,y,z,0} {}
@@ -53,10 +47,8 @@ class alignas(ALIGN_WIDTH) Vec3 : public Vec4{
             temp0 = temp0*B0;
             temp1 = temp1*B1;
 
-            return batch2vec3(xsimd::swizzle(temp0-temp1,shuffler));
+            return Vec3(xsimd::swizzle(temp0-temp1,shuffler));
         }
-
-
 
 };
 
