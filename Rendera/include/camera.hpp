@@ -23,6 +23,7 @@ class Camera{
         static std::minstd_rand random_gen;
         return static_cast<float>(random_gen())/random_gen.modulus - 0.5;
     }
+    
     public:
 
         Camera(vec3 Origin, float p_width, float p_height, int i_width, int i_height, float Focal_length):
