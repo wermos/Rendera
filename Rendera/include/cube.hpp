@@ -53,8 +53,10 @@ public:
         vec3 np_pos=point - m_a - m_b - m_c - m_position;
         vec3 normal;
 
+        static double m_epsilon = 1e-5;
+
         // every if statement checks if the point is on which of the 6 faces of the cube
-        if (dot(p_pos, cross(m_a, m_b)) < 1e5)
+        if (dot(p_pos, cross(m_a, m_b)) < m_epsilon)
         {
             normal = cross(m_a, m_b);
             if (dot(m_c, normal) < 0)
@@ -62,7 +64,7 @@ public:
                 normal = -normal;
             }
         }
-        else if (abs(dot(p_pos, cross(m_a, m_c))) < 1e-5)
+        else if (abs(dot(p_pos, cross(m_a, m_c))) < m_epsilon)
         {
             normal = cross(m_a, m_c);
             if (dot(m_b, normal) < 0)
@@ -70,7 +72,7 @@ public:
                 normal = -normal;
             }
         }
-        else if (dot(p_pos, cross(m_b, m_c)) < 1e5)
+        else if (dot(p_pos, cross(m_b, m_c)) < m_epsilon)
         {
             normal = cross(m_b, m_c);
             if (dot(m_a, normal) < 0)
@@ -78,7 +80,7 @@ public:
                 normal = -normal;
             }
         }
-        else if (dot(np_pos, cross(m_a, m_b)) < 1e5)
+        else if (dot(np_pos, cross(m_a, m_b)) < m_epsilon)
         {
             normal = cross(m_a, m_b);
             if (dot(-m_c, normal) < 0)
@@ -86,7 +88,7 @@ public:
                 normal = -normal;
             }
         }
-        else if (dot(np_pos, cross(m_a, m_c)) < 1e5)
+        else if (dot(np_pos, cross(m_a, m_c)) < m_epsilon)
         {
             normal = cross(m_a, m_c);
             if (dot(-m_b, normal) < 0)
@@ -94,7 +96,7 @@ public:
                 normal = -normal;
             }
         }
-        else if (dot(np_pos, cross(m_b, m_c)) < 1e5)
+        else if (dot(np_pos, cross(m_b, m_c)) < m_epsilon)
         {
             normal = cross(m_b, m_c);
             if (dot(-m_a, normal) < 0)
