@@ -2,3 +2,6 @@
 	path = utilities/libs/xsimd
 	url = https://github.com/xtensor-stack/xsimd.git
 	branch = 8.1.0
+[submodule "utilities/libs/stb"]
+	path = utilities/libs/stb
+	url = https://github.com/nothings/stb.git
