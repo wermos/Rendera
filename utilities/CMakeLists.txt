@@ -6,9 +6,6 @@ project(utilities VERSION 0.0.1)
 # add xsimd
 add_subdirectory(libs/xsimd)
 
-# add stb
-add_subdirectory(libs/stb)
-
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp)
 
 add_library(utilities ${SOURCES})
