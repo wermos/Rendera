@@ -41,6 +41,7 @@ private:
     vec3 m_position;
     vec3 m_a, m_b, m_c;
     Material m_material;
+    static const double m_epsilon = 1e-5;
 
 public:
     Cube(vec3 position, vec3 a, vec3 b, vec3 c, Material mat) : m_position{position}, m_a{a}, m_b{b}, m_c{c}, m_material{mat} {};
@@ -53,73 +54,91 @@ public:
         vec3 np_pos=point - m_a - m_b - m_c - m_position;
         vec3 normal;
 
-        static double m_epsilon = 1e-5;
 
         // every if statement checks if the point is on which of the 6 faces of the cube
         if (dot(p_pos, cross(m_a, m_b)) < m_epsilon)
         {
-            normal = cross(m_a, m_b);
             if (dot(m_c, normal) < 0)
             {
-                normal = -normal;
+                normal = -cross(m_a, m_b);
+            }else
+            {
+                normal = cross(m_a, m_b);
             }
+            
         }
         else if (abs(dot(p_pos, cross(m_a, m_c))) < m_epsilon)
         {
-            normal = cross(m_a, m_c);
             if (dot(m_b, normal) < 0)
             {
-                normal = -normal;
+                normal = -cross(m_a, m_c);
+            }
+            else
+            {
+                normal = cross(m_a, m_c);
             }
         }
         else if (dot(p_pos, cross(m_b, m_c)) < m_epsilon)
         {
-            normal = cross(m_b, m_c);
             if (dot(m_a, normal) < 0)
             {
-                normal = -normal;
+                normal = -cross(m_b, m_c);
+            }
+            else
+            {
+                normal = cross(m_b, m_c);
             }
         }
         else if (dot(np_pos, cross(m_a, m_b)) < m_epsilon)
         {
-            normal = cross(m_a, m_b);
             if (dot(-m_c, normal) < 0)
             {
-                normal = -normal;
+                normal = -cross(m_a, m_b);
+            }
+            else
+            {
+                normal = cross(m_a, m_b);
             }
         }
         else if (dot(np_pos, cross(m_a, m_c)) < m_epsilon)
         {
-            normal = cross(m_a, m_c);
             if (dot(-m_b, normal) < 0)
             {
-                normal = -normal;
+                normal = -cross(m_a, m_c);
+            }
+            else
+            {
+                normal = cross(m_a, m_c);
             }
         }
         else if (dot(np_pos, cross(m_b, m_c)) < m_epsilon)
         {
-            normal = cross(m_b, m_c);
             if (dot(-m_a, normal) < 0)
             {
-                normal = -normal;
+                normal = -cross(m_b, m_c);
+            }
+            else
+            {
+                normal = cross(m_b, m_c);
             }
         }
         else
         {
             normal = vec3(0, 0, 0);
         }
-        return ray(point, normal);
+        return {point, normal};
     }
 
     // returns the intersection of the ray with the plane passing through the point p and perpendicular to the normal n
     vec3 plane_intersect(const vec3 &n, const vec3 &p, const ray &r)
     {
         float num = dot(n, p - r.get_origin());
-        if (abs(dot(r.get_direction(), n)) > 1e-5)
+        // if ray is not parallel to the plane
+        if (abs(dot(r.get_direction(), n)) > m_epsilon)
         {
             num = num / dot(r.get_direction(), n);
         }
-        else                                            // if ray is parallel to the plane
+        else    // if ray is parallel to the plane
         {
             if(num > 0){
                 num = std::numeric_limits<float>::max();
