@@ -1,103 +1,67 @@
+#include <iostream>
+#include "vec4.hpp"
 #include "vec3.hpp"
-#include "ray.hpp"
-#include "color.hpp"
-#include "camera.hpp"
-#include "sphere.hpp"
-#include "intersection.hpp"
-#include <fstream>
-#include <cmath>
-#include <random>
 
-color lighting(Material mat, ray cam_ray, ray normal, vec3 point, vec3 light_src, color intensity){
-
-    ray incident_ray = {point, point - light_src};
-    ray reflect_ray = reflect(incident_ray, normal);
-
-    color effective_col = mat.Color() * intensity;
-
-    //determine ambient contribution
-    color ambient_col = effective_col * mat.amb();
-
+int main() {
+	Vec3 v{3,-3,1};
+    Vec3 v2{4,9,2};
+    Vec4 v3{1};
+    std::cout<<v3<<'\n';
+	std::cout<<v<<" "<<v2<<'\n';
+    std::cout<<"v.norm(): "<<v.norm()<<'\n';
+    std::cout<<"v.dot(v): "<<v.dot(v)<<'\n';
+    std::cout<<"v.dot(v2): "<<v.dot(v2)<<'\n'; //dot(v1,v2)
+    std::cout<<"v.cross(v2): "<<v.cross(v2)<<'\n';
+    //std::cout<<"angle(v,v2): "<<vec4<double,xsimd::avx2>::angle(v,v2)<<'\n';
     
-    //determine diffuse contribution, using Lambert's cosine law
-    color diffuse_col = {0, 0, 0};
-    float diffuse_cosine = dot(-incident_ray.get_direction(), normal.get_direction());
+    std::cout<<"v+v2: "<<v+v2<<'\n';
+    std::cout<<"v-v2: "<<v-v2<<'\n';
+    std::cout<<"v*2: "<<v*2<<'\n';
+    std::cout<<"v/2: "<<v/2.0<<'\n';
 
-    // float lambert_cosine = dot(-cam_ray.get_direction(), normal.get_direction());
+    v+=v2;
+    std::cout<<"v: "<<v<<'\n';
+    std::cout<<"-v:"<<-v<<'\n';
 
-    if (diffuse_cosine >= 0){
-        diffuse_col = diffuse_cosine * effective_col * mat.dif();
+    for(int i=0;i<4;i++){
+        std::cout<<v[i]<<'\n';
     }
+    xsimd::batch<double, xsimd::avx2> a{1.5, 2.5, 3.5, 4.5};
+    xsimd::batch<double, xsimd::avx2> b{2.5, 3.5, 4.5, 5.5};
+    //auto bleh = a*b;
+    a*=b;
+    std::cout<<a<<'\n';
+    // xsimd::batch<double, xsimd::avx2> c{2.5};
+    // std::cout<<xsimd::batch<double, xsimd::avx2>::broadcast(2.5)<<'\n';
+    // possible fuck up
+    // float alignas(32) m_v[4]={1.5, 2.5, 3.5, 4.5};
+    // auto x = xsimd::load_aligned(m_v);
 
+    // std::cout<<x<<'\n';
+    // std::cout<<hadd(x)<<'\n';
+
+    std::cout<<"cross-product-baby"<<std::endl;
+
+
+    xsimd::batch<float, xsimd::sse4_2> B1{3,-3,1,0};
+    xsimd::batch<float, xsimd::sse4_2> B0{4,9,2,0};
+
+    auto shuffler =  xsimd::make_batch_constant<typename as_index<xsimd::batch<float, xsimd::sse4_2>>::type, indices>();
+
+    auto _temp0 = xsimd::swizzle(B1,shuffler);
+    auto _temp1 = xsimd::swizzle(B0,shuffler);
+
+    _temp0 = _temp0*B0;
+    _temp1 = _temp1*B1;
+    auto _temp2 = _temp0-_temp1;
     
-
-    float specular_cosine = dot(-cam_ray.get_direction(), reflect_ray.get_direction());
-    float spec_factor = 0;
-
-    if(specular_cosine >= 0){
-        spec_factor = pow(specular_cosine, mat.shiny());
-    }
-    color specular_col = spec_factor * intensity * mat.spe();
-
-    return ambient_col + diffuse_col + specular_col;
-}
-
-int main(){
-
-    vec3 center = {5,0,0};
-    color blue = {0.2,0.2, 1};
-    Material mat_1 ={blue, 0.1, 1, 0.9, 200};
-    sphere s(center,4, mat_1);
-
-    vec3 light_src = {-0.5,-3,5};
-    color light_col = {1,1,1};
-
-    vec3 cam_origin = {0,0,0};
-    float port_width = 8;
-    float port_height = 8;
-    int img_width = 512;
-    int img_height = 512;
-    float focal_length = 2;
-    int max_col = 255;
-    Camera cam(cam_origin, port_width, port_height, img_width, img_height, focal_length);
-
-    //ppm file
-    std::ofstream image("sphere.ppm");
-    image << "P3\n";
-    image << img_width << " " << img_height << "\n";
-    image << max_col << "\n";
-
-
-    for(int i=0; i<img_height; i++){
-        for(int j=0; j<img_width; j++){
-
-            //process each ray
-            color shade;
-            for(int sample=0; sample<50; sample++){
-
-                ray ray_1 = cam.get_ray(j,i);
-
-                Intersection i;
-                bool hits = i.hit(s,ray_1);
-                color temp_shade = {1,1,1};
-                
-                
-                if(hits){
-
-                    vec3 hit_point = ray_1.fetch(i.dist_1()); 
-                    temp_shade = lighting(s.mat(), ray_1, s.normal(hit_point),hit_point,light_src, light_col);
-                }
-
-                if(sample==0){shade = temp_shade;}
-                shade = (shade*(sample) + temp_shade)* (1.0/(sample+1));
-
-            }
-            shade = shade.get_int();
-
-            //print result
-            image << shade.get_R() << " " << shade.get_G() << " " << shade.get_B()<<" " ;
-        }
-    }
-
-    image.close();
+    std::cout<<B0<<std::endl;
+    std::cout<<B1<<std::endl;
+    std::cout<<xsimd::swizzle(_temp2,shuffler);
+  
+//    std::cout<<xsimd::swizzle(gg,gg2, xsimd::requires_arch<sse4_2>);
+    
+    //batch<float, xsimd::sse4_2> swizzle(batch<float, xsimd::sse4_2> const& self, batch_constant<batch<uint32_t, A>, V0, V1, V2, V3>, requires_arch<sse2>)
+    
+    return 0;
 }
