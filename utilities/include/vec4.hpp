@@ -5,6 +5,7 @@
 #include <ostream>
 #include <cmath>
 #include <xsimd/xsimd.hpp>
+#include <type_traits>
 
 #include "config.hpp"
 
@@ -14,8 +15,6 @@
     - UType: Data type to be used.
     - CONSTEXPR_CMATH: Switch constexpr if available in cmath.
 */
-
-
 class alignas(ALIGN_WIDTH) Vec4{
     
     public:
@@ -52,8 +51,12 @@ class alignas(ALIGN_WIDTH) Vec4{
 
         // Common Vec operations
         constexpr Utype dot(const Vec4& v2) const{
-            xsimd::batch<Utype,UArch> temp = vec2batch(*this)*vec2batch(v2);
-            return sum(temp);
+            if (std::is_constant_evaluated()){
+                return (*this).x()*v2.x() + (*this).y()*v2.y() + (*this).z()*v2.z() + (*this).w()*v2.w() ;
+            } else {    
+                xsimd::batch<Utype,UArch> temp = vec2batch(*this)*vec2batch(v2);
+                return sum(temp);
+            }
         }
         
         CONSTEXPR_CMATH Utype norm() const{
@@ -69,14 +72,25 @@ class alignas(ALIGN_WIDTH) Vec4{
 
         // Negation 
         friend constexpr Vec4 operator-(const Vec4& v1){
-            return batch2vec(-vec2batch(v1));
+            if (std::is_constant_evaluated()){
+                return Vec4(-v1.x(),-v1.y(),-v1.z(),-v1.w());
+            } else {
+                return Vec4(-vec2batch(v1));
+            }
         }
 
         // Addition and Substraction
         friend constexpr Vec4& operator+=(Vec4& v1, const Vec4& v2){
-            xsimd::batch<Utype,UArch> b1 = vec2batch(v1);
-            b1+=vec2batch(v2);
-            v1= batch2vec(b1);
+            if (std::is_constant_evaluated()){
+                v1.m_v[0] += v2.x();
+				v1.m_v[1] += v2.y();
+				v1.m_v[2] += v2.z();
+                v1.m_v[3] += v2.w();
+            } else {
+                xsimd::batch<Utype,UArch> b1 = vec2batch(v1);
+                b1+=vec2batch(v2);
+                v1= Vec4(b1);
+            }
             return v1;
         }
 
@@ -104,7 +118,6 @@ class alignas(ALIGN_WIDTH) Vec4{
 
         // scalar pre-multiplications
         friend constexpr Vec4 operator*(const Utype& s, const Vec4& v1){
-            xsimd::batch<Utype,UArch> vs= xsimd::batch<Utype,UArch>::broadcast(s);
             Vec4 v1_copy = v1;
             v1_copy*=s;
             return v1_copy;
@@ -112,8 +125,15 @@ class alignas(ALIGN_WIDTH) Vec4{
 
         // scalar post-multiplication-assignment
         friend constexpr Vec4& operator*=(Vec4& v1, const Utype& s){
-            xsimd::batch<Utype,UArch> vs= xsimd::batch<Utype,UArch>::broadcast(s);
-            v1  = batch2vec(vec2batch(v1)*vs);
+            if (std::is_constant_evaluated()){
+                v1.m_v[0]*=s;
+                v1.m_v[1]*=s;
+                v1.m_v[2]*=s;
+                v1.m_v[3]*=s;
+            } else {
+                xsimd::batch<Utype,UArch> vs= xsimd::batch<Utype,UArch>::broadcast(s);
+                v1  = Vec4(vec2batch(v1)*vs);
+            }
             return v1;
         }
         
@@ -135,16 +155,11 @@ class alignas(ALIGN_WIDTH) Vec4{
 		}
 	
     protected:
-        static constexpr xsimd::batch<Utype,UArch> vec2batch(const Vec4& v){
+        static xsimd::batch<Utype,UArch> vec2batch(const Vec4& v){
             return  xsimd::batch<Utype,UArch>::load_aligned(v.m_v);
         }
-        
-        static constexpr Vec4 batch2vec(xsimd::batch<Utype,UArch> x){
-            Vec4 v{x};
-            return v;
-        }
 
-        static constexpr Utype sum(xsimd::batch<Utype,UArch> x){
+        static Utype sum(xsimd::batch<Utype,UArch> x){
             return xsimd::hadd(x);
         }
     

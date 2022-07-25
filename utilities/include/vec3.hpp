@@ -3,13 +3,14 @@
 
 #include <iostream>
 #include <cmath>
+#include <type_traits>
 
 #include "vec4.hpp"
 #include "config.hpp"
 
 class alignas(ALIGN_WIDTH) Vec3 : public Vec4{
-    
-    private:    
+    private:
+                
         /*
         structs as_index,indices are used to generate appropriate xsimd::batch_constant 
         to be used for xsimd::swizzle function used inside cross product. 
@@ -34,20 +35,23 @@ class alignas(ALIGN_WIDTH) Vec3 : public Vec4{
         
         // cross-product
         constexpr Vec3 cross(const Vec3& v2) const{
+            if (std::is_constant_evaluated()){
+                return Vec3((*this).y()*v2.z() - (*this).z()*v2.y(),(*this).z()*v2.x() - (*this).x()*v2.z(),(*this).x()*v2.y() - (*this).y()*v2.x());
+            } else {    
+                xsimd::batch<Utype,UArch> B0 = vec2batch(*this); 
+                xsimd::batch<Utype,UArch> B1= vec2batch(v2);
+                
+                //create a appropriate mask for cross product.
+                auto shuffler =  xsimd::make_batch_constant<typename as_index<xsimd::batch<float, xsimd::sse4_2>>::type, indices>();
+                
+                xsimd::batch<Utype,UArch> temp0 = xsimd::swizzle(B1,shuffler);
+                xsimd::batch<Utype,UArch> temp1 = xsimd::swizzle(B0,shuffler);
 
-            xsimd::batch<Utype,UArch> B0 = vec2batch(*this); 
-            xsimd::batch<Utype,UArch> B1= vec2batch(v2);
-            
-            //create a appropriate mask for cross product.
-            auto shuffler =  xsimd::make_batch_constant<typename as_index<xsimd::batch<float, xsimd::sse4_2>>::type, indices>();
-            
-            xsimd::batch<Utype,UArch> temp0 = xsimd::swizzle(B1,shuffler);
-            xsimd::batch<Utype,UArch> temp1 = xsimd::swizzle(B0,shuffler);
+                temp0 = temp0*B0;
+                temp1 = temp1*B1;
 
-            temp0 = temp0*B0;
-            temp1 = temp1*B1;
-
-            return Vec3(xsimd::swizzle(temp0-temp1,shuffler));
+                return Vec3(xsimd::swizzle(temp0-temp1,shuffler));
+            }
         }
 
 };
