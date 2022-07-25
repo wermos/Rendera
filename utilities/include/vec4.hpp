@@ -42,7 +42,7 @@ class alignas(ALIGN_WIDTH) Vec4{
         }
         
         //indexing operations
-        constexpr Utype& operator[](std::size_t i) const{
+        constexpr const Utype& operator[](std::size_t i) const{
             return m_v[i];
         }
 
