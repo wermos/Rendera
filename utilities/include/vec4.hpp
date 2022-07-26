@@ -3,25 +3,28 @@
 
 #include <cstddef>
 #include <ostream>
-#include <cmath>
+#include <cmath> // for the std::size_t datatype
+#include <type_traits> // for std::is_constant_evaluated
+
 #include <xsimd/xsimd.hpp>
-#include <type_traits>
 
 #include "config.hpp"
-
 /*  *Macros provided by config.hpp
     - ALIGN_WIDTH: Alignment width for class, since it is dependent on Arch.
     - UArch: Architecture to be used.
     - UType: Data type to be used.
     - CONSTEXPR_CMATH: Switch constexpr if available in cmath.
 */
+
 class alignas(ALIGN_WIDTH) vec4{
     
     public:
         constexpr vec4() : m_v{0,0,0,0} {}
         constexpr explicit vec4(Utype x) : m_v{x,x,x,x} {}
         constexpr vec4(Utype x,Utype y,Utype z,Utype w) : m_v{x,y,z,w} {}
-        constexpr explicit vec4(xsimd::batch<Utype,UArch> x): m_v{0,0,0,0} {x.store_aligned(m_v);}
+        constexpr explicit vec4(xsimd::batch<Utype,UArch> x){
+            x.store_aligned(m_v);
+        }
         
         //getters
         constexpr Utype x() const{
@@ -60,27 +63,27 @@ class alignas(ALIGN_WIDTH) vec4{
         }
         
         CONSTEXPR_CMATH Utype norm() const{
-            return sqrt(dot(*this));
+            return std::sqrt(dot(*this));
         }
 
         CONSTEXPR_CMATH static Utype angle(const vec4& v1,const vec4& v2){
-            return acos(v1.dot(v2)/(v1.norm()*v2.norm()));
+            return std::acos(v1.dot(v2)/(v1.norm()*v2.norm()));
         }
         CONSTEXPR_CMATH vec4 unit() const{
             return *this/this->norm();
         }
 
         // Negation 
-        friend constexpr vec4 operator-(const vec4& v1){
+        constexpr vec4 operator-(const vec4& v1){
             if (std::is_constant_evaluated()){
-                return vec4(-v1.x(),-v1.y(),-v1.z(),-v1.w());
+                return vec4{-v1.x(),-v1.y(),-v1.z(),-v1.w()};
             } else {
-                return vec4(-vec2batch(v1));
+                return vec4{-vec2batch(v1)};
             }
         }
 
         // Addition and Substraction
-        friend constexpr vec4& operator+=(vec4& v1, const vec4& v2){
+        constexpr vec4& operator+=(vec4& v1, const vec4& v2){
             if (std::is_constant_evaluated()){
                 v1.m_v[0] += v2.x();
 				v1.m_v[1] += v2.y();
@@ -89,42 +92,42 @@ class alignas(ALIGN_WIDTH) vec4{
             } else {
                 xsimd::batch<Utype,UArch> b1 = vec2batch(v1);
                 b1+=vec2batch(v2);
-                v1= vec4(b1);
+                v1= vec4{b1};
             }
             return v1;
         }
 
-        friend constexpr vec4 operator+(const vec4& v1, const vec4& v2){
+        constexpr vec4 operator+(const vec4& v1, const vec4& v2){
             vec4 v1_copy = v1;
             v1_copy+=v2;
             return v1_copy;
         }
 
-        friend constexpr vec4 operator-(const vec4& v1, const vec4& v2){
+        constexpr vec4 operator-(const vec4& v1, const vec4& v2){
             return v1+(-v2);
         }
 
-        friend constexpr vec4& operator-=(vec4& v1, const vec4& v2){
+        constexpr vec4& operator-=(vec4& v1, const vec4& v2){
             return v1+=-v2;
         }
 
         // Scalar Multiplication and Division
         // scalar post-multiplications
-        friend constexpr vec4 operator*(const vec4& v1, const Utype& s){
+        constexpr vec4 operator*(const vec4& v1, const Utype& s){
             vec4 v1_copy = v1;
             v1_copy*=s;
             return v1_copy;
         }
 
         // scalar pre-multiplications
-        friend constexpr vec4 operator*(const Utype& s, const vec4& v1){
+        constexpr vec4 operator*(const Utype& s, const vec4& v1){
             vec4 v1_copy = v1;
             v1_copy*=s;
             return v1_copy;
         }
 
         // scalar post-multiplication-assignment
-        friend constexpr vec4& operator*=(vec4& v1, const Utype& s){
+        constexpr vec4& operator*=(vec4& v1, const Utype& s){
             if (std::is_constant_evaluated()){
                 v1.m_v[0]*=s;
                 v1.m_v[1]*=s;
@@ -138,18 +141,18 @@ class alignas(ALIGN_WIDTH) vec4{
         }
         
         // scalar post-division
-        friend constexpr vec4 operator/(const vec4& v1, const Utype& s){
+        constexpr vec4 operator/(const vec4& v1, const Utype& s){
             return v1*(1/s);
         }
 
         // scalar division+assignment
-        friend constexpr vec4& operator/=(vec4& v1, const Utype& s){
+        constexpr vec4& operator/=(vec4& v1, const Utype& s){
             v1*=1/s;
             return v1;
         }
 
         // print the vector
-        friend std::ostream& operator<<(std::ostream& out, const vec4& v) {            
+        std::ostream& operator<<(std::ostream& out, const vec4& v) {            
             out <<'('<< v.m_v[0] << ',' << v.m_v[1] << ',' << v.m_v[2]<<','<< v.m_v[3]<<')';
             return out;
 		}
