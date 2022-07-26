@@ -86,8 +86,8 @@ class alignas(ALIGN_WIDTH) vec4{
         constexpr vec4& operator+=(vec4& v1, const vec4& v2){
             if (std::is_constant_evaluated()){
                 v1.m_v[0] += v2.x();
-				v1.m_v[1] += v2.y();
-				v1.m_v[2] += v2.z();
+		v1.m_v[1] += v2.y();
+		v1.m_v[2] += v2.z();
                 v1.m_v[3] += v2.w();
             } else {
                 xsimd::batch<Utype,UArch> b1 = vec2batch(v1);
