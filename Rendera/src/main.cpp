@@ -7,6 +7,15 @@
 #include <fstream>
 #include <cmath>
 #include <random>
+#include <iostream>
+#include <sstream>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
+#define STBI_MSC_SECURE_CRT
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
 
 color lighting(Material mat, ray cam_ray, ray normal, vec3 point, vec3 light_src, color intensity){
 
@@ -62,42 +71,85 @@ int main(){
     Camera cam(cam_origin, port_width, port_height, img_width, img_height, focal_length);
 
     //ppm file
-    std::ofstream image("sphere.ppm");
-    image << "P3\n";
-    image << img_width << " " << img_height << "\n";
-    image << max_col << "\n";
+    // std::ofstream image("sphere.ppm");
+    // image << "P3\n";
+    // image << img_width << " " << img_height << "\n";
+    // image << max_col << "\n";
+    
 
+    // for(int i=0; i<img_height; i++){
+    //     for(int j=0; j<img_width; j++){
 
-    for(int i=0; i<img_height; i++){
-        for(int j=0; j<img_width; j++){
+    //         //process each ray
+    //         color shade;
+    //         for(int sample=0; sample<50; sample++){
 
-            //process each ray
-            color shade;
+    //             ray ray_1 = cam.get_ray(j,i);
+
+    //             Intersection i;
+    //             bool hits = i.hit(s,ray_1);
+    //             color temp_shade = {1,1,1};
+                
+                
+    //             if(hits){
+
+    //                 vec3 hit_point = ray_1.fetch(i.dist_1()); 
+    //                 temp_shade = lighting(s.mat(), ray_1, s.normal(hit_point),hit_point,light_src, light_col);
+    //             }
+
+    //             if(sample==0){shade = temp_shade;}
+    //             shade = (shade*(sample) + temp_shade)* (1.0/(sample+1));
+
+    //         }
+    //         shade = shade.get_int();
+
+    //         //print result
+    //         image << shade.get_R() << " " << shade.get_G() << " " << shade.get_B()<<" " ;
+    //     }
+    // }
+
+    // image.close();
+    
+    // Jpeg and png
+    uint8_t* pixels = new uint8_t[img_width * img_height * 3];
+
+    int index = 0;
+    for (int j = img_height - 1; j >= 0; --j){
+        for (int i = 0; i < img_width; ++i){
+        //process each ray
+        color shade;
             for(int sample=0; sample<50; sample++){
-
                 ray ray_1 = cam.get_ray(j,i);
 
                 Intersection i;
                 bool hits = i.hit(s,ray_1);
                 color temp_shade = {1,1,1};
-                
-                
-                if(hits){
 
-                    vec3 hit_point = ray_1.fetch(i.dist_1()); 
-                    temp_shade = lighting(s.mat(), ray_1, s.normal(hit_point),hit_point,light_src, light_col);
+
+                    if(hits){
+
+                        vec3 hit_point = ray_1.fetch(i.dist_1()); 
+                        temp_shade = lighting(s.mat(), ray_1, s.normal(hit_point),hit_point,light_src, light_col);
+                    }
+
+                    if(sample==0){shade = temp_shade;}
+                    shade = (shade*(sample) + temp_shade)* (1.0/(sample+1));
+
                 }
+                shade = shade.get_int();
 
-                if(sample==0){shade = temp_shade;}
-                shade = (shade*(sample) + temp_shade)* (1.0/(sample+1));
-
-            }
-            shade = shade.get_int();
-
-            //print result
-            image << shade.get_R() << " " << shade.get_G() << " " << shade.get_B()<<" " ;
+            pixels[index++] = shade.get_R();
+            pixels[index++] = shade.get_G();
+            pixels[index++] = shade.get_B();
         }
     }
+    
+    // if CHANNEL_NUM is 4, you can use alpha channel in png
+    stbi_write_png("Spherepng.png", img_width, img_height, 3, pixels, img_width * 3);
 
-    image.close();
+    // You have to use 3 comp for complete jpg file. If not, the image will be grayscale or nothing.
+    stbi_write_jpg("Spherejpg3.jpg", img_width, img_height, 3, pixels, 100);
+    delete[] pixels;
+    
+    return 0;
 }
