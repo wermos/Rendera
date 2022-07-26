@@ -144,10 +144,8 @@ int main(){
         }
     }
     
-    // if CHANNEL_NUM is 4, you can use alpha channel in png
     stbi_write_png("Spherepng.png", img_width, img_height, 3, pixels, img_width * 3);
 
-    // You have to use 3 comp for complete jpg file. If not, the image will be grayscale or nothing.
     stbi_write_jpg("Spherejpg3.jpg", img_width, img_height, 3, pixels, 100);
     delete[] pixels;
     
