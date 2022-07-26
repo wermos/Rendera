@@ -70,55 +70,16 @@ int main(){
     int max_col = 255;
     Camera cam(cam_origin, port_width, port_height, img_width, img_height, focal_length);
 
-    //ppm file
-    // std::ofstream image("sphere.ppm");
-    // image << "P3\n";
-    // image << img_width << " " << img_height << "\n";
-    // image << max_col << "\n";
-    
-
-    // for(int i=0; i<img_height; i++){
-    //     for(int j=0; j<img_width; j++){
-
-    //         //process each ray
-    //         color shade;
-    //         for(int sample=0; sample<50; sample++){
-
-    //             ray ray_1 = cam.get_ray(j,i);
-
-    //             Intersection i;
-    //             bool hits = i.hit(s,ray_1);
-    //             color temp_shade = {1,1,1};
-                
-                
-    //             if(hits){
-
-    //                 vec3 hit_point = ray_1.fetch(i.dist_1()); 
-    //                 temp_shade = lighting(s.mat(), ray_1, s.normal(hit_point),hit_point,light_src, light_col);
-    //             }
-
-    //             if(sample==0){shade = temp_shade;}
-    //             shade = (shade*(sample) + temp_shade)* (1.0/(sample+1));
-
-    //         }
-    //         shade = shade.get_int();
-
-    //         //print result
-    //         image << shade.get_R() << " " << shade.get_G() << " " << shade.get_B()<<" " ;
-    //     }
-    // }
-
-    // image.close();
-    
     // Jpeg and png
-    uint8_t* pixels = new uint8_t[img_width * img_height * 3];
-
-    int index = 0;
-    for (int j = img_height - 1; j >= 0; --j){
-        for (int i = 0; i < img_width; ++i){
+    // Making an array of such size as there are width*height pixels and each pixel has 3 RGB values.
+    std::uint8_t* pixels = new std::uint8_t[img_width * img_height * 3]; 
+    int numSamples = 50;
+    int index = 0;  //Index of the array containing RGB values of image for the current pixel
+    for(int i=0; i<img_height; i++){
+        for(int j=0; j<img_width; j++){
         //process each ray
         color shade;
-            for(int sample=0; sample<50; sample++){
+            for(int sample=0; sample<numSamples; sample++){
                 ray ray_1 = cam.get_ray(j,i);
 
                 Intersection i;
