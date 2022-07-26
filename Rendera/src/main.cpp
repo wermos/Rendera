@@ -148,6 +148,7 @@ int main(){
 
     stbi_write_jpg("Spherejpg3.jpg", img_width, img_height, 3, pixels, 100);
     delete[] pixels;
+    pixels = nullptr;
     
     return 0;
 }
