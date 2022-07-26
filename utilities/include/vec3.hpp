@@ -8,7 +8,7 @@
 #include "vec4.hpp"
 #include "config.hpp"
 
-class alignas(ALIGN_WIDTH) Vec3 : public Vec4{
+class alignas(ALIGN_WIDTH) vec3 : public vec4{
     private:
                 
         /*
@@ -30,13 +30,13 @@ class alignas(ALIGN_WIDTH) Vec3 : public Vec4{
         };
 
     public:
-        constexpr Vec3(Utype x,Utype y,Utype z) : Vec4{x,y,z,0} {}
-        constexpr explicit Vec3(xsimd::batch<Utype,UArch> x) : Vec4{x} {}
+        constexpr vec3(Utype x,Utype y,Utype z) : vec4{x,y,z,0} {}
+        constexpr explicit vec3(xsimd::batch<Utype,UArch> x) : vec4{x} {}
         
         // cross-product
-        constexpr Vec3 cross(const Vec3& v2) const{
+        constexpr vec3 cross(const vec3& v2) const{
             if (std::is_constant_evaluated()){
-                return Vec3((*this).y()*v2.z() - (*this).z()*v2.y(),(*this).z()*v2.x() - (*this).x()*v2.z(),(*this).x()*v2.y() - (*this).y()*v2.x());
+                return vec3((*this).y()*v2.z() - (*this).z()*v2.y(),(*this).z()*v2.x() - (*this).x()*v2.z(),(*this).x()*v2.y() - (*this).y()*v2.x());
             } else {    
                 xsimd::batch<Utype,UArch> B0 = vec2batch(*this); 
                 xsimd::batch<Utype,UArch> B1= vec2batch(v2);
@@ -50,7 +50,7 @@ class alignas(ALIGN_WIDTH) Vec3 : public Vec4{
                 temp0 = temp0*B0;
                 temp1 = temp1*B1;
 
-                return Vec3(xsimd::swizzle(temp0-temp1,shuffler));
+                return vec3(xsimd::swizzle(temp0-temp1,shuffler));
             }
         }
 
