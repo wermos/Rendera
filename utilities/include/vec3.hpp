@@ -34,7 +34,7 @@ class alignas(ALIGN_WIDTH) vec3 : public vec4{
     public:
         constexpr explicit vec3(Utype x) : vec4{x,x,x,0} {}
         constexpr vec3(Utype x,Utype y,Utype z) : vec4{x,y,z,0} {}
-        constexpr explicit vec3(xsimd::batch<Utype,UArch> x) : vec4{x} {}
+        explicit vec3(xsimd::batch<Utype,UArch> x) : vec4{x} {}
         
         // cross-product
         friend constexpr vec3 cross(const vec3& v1,const vec3& v2){
