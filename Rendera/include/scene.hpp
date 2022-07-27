@@ -66,12 +66,14 @@ class Scene{
 
         vec3 light_src = {-5,3,5};
         color light_col = {1,1,1};
+        vec3 light_src2 = {0, 10, 0};
 
 
-        vec3 cam_origin = {0,0,0};
-        float port_width = 8;
-        float port_height = 8;
-        float focal_length = 2;
+
+        vec3 cam_origin = {0,0,1};
+        float port_width = 10;
+        float port_height = 10;
+        float focal_length = 4;
         int max_col = 255;
         Camera cam;
 
@@ -115,6 +117,7 @@ class Scene{
                         hitinfo[y*img_width + x].intersection_pt = hitinfo[y*img_width + x].ray_.fetch(hitinfo[y*img_width + x].dist); 
                         hitinfo[y*img_width + x].normal = (*sp).normal(hitinfo[y*img_width + x].intersection_pt);
                         hitinfo[y*img_width + x].shade = lighting((*sp).mat(), hitinfo[y*img_width + x].ray_, hitinfo[y*img_width + x].normal, hitinfo[y*img_width + x].intersection_pt, light_src, light_col);
+                        hitinfo[y*img_width + x].shade += lighting((*sp).mat(), hitinfo[y*img_width + x].ray_, hitinfo[y*img_width + x].normal, hitinfo[y*img_width + x].intersection_pt, light_src2, light_col);
                         hitinfo[y*img_width + x].rgb = hitinfo[y*img_width + x].shade.get_int();
                         hitinfo[y*img_width + x].ref_ray = reflect(hitinfo[y*img_width + x].ray_, hitinfo[y*img_width + x].normal);
                         }
@@ -125,8 +128,39 @@ class Scene{
                     hitinfo[y*img_width + x].intersection_pt = hitinfo[y*img_width + x].ray_.fetch(hitinfo[y*img_width + x].dist); 
                     hitinfo[y*img_width + x].normal = (*sp).normal(hitinfo[y*img_width + x].intersection_pt);
                     hitinfo[y*img_width + x].shade = lighting((*sp).mat(), hitinfo[y*img_width + x].ray_, hitinfo[y*img_width + x].normal, hitinfo[y*img_width + x].intersection_pt, light_src, light_col);
+                    hitinfo[y*img_width + x].shade += lighting((*sp).mat(), hitinfo[y*img_width + x].ray_, hitinfo[y*img_width + x].normal, hitinfo[y*img_width + x].intersection_pt, light_src2, light_col);
                     hitinfo[y*img_width + x].rgb = hitinfo[y*img_width + x].shade.get_int();
                     hitinfo[y*img_width + x].ref_ray = reflect(hitinfo[y*img_width + x].ray_, hitinfo[y*img_width + x].normal);
+
+                }
+            }
+
+            for(cb = hitable_cube.begin(); cb != hitable_cube.end(); ++cb){
+                bool hits = (*cb).hit(hitinfo[y*img_width + x].ray_);
+                if(hitinfo[y*img_width + x].ishitting && hits){
+                    float d = (*cb).get_int_pt().norm();
+                    if (hitinfo[y*img_width + x].dist>d){
+                        hitinfo[y*img_width + x].ishitting = true;
+                        hitinfo[y*img_width + x].intersection_pt = (*cb).get_int_pt();
+                        hitinfo[y*img_width + x].dist = d;
+                        hitinfo[y*img_width + x].normal = (*cb).normal(hitinfo[y*img_width + x].intersection_pt);
+                        hitinfo[y*img_width + x].shade = lighting((*cb).mat(), hitinfo[y*img_width + x].ray_, hitinfo[y*img_width + x].normal, hitinfo[y*img_width + x].intersection_pt, light_src, light_col);
+                        hitinfo[y*img_width + x].shade += lighting((*cb).mat(), hitinfo[y*img_width + x].ray_, hitinfo[y*img_width + x].normal, hitinfo[y*img_width + x].intersection_pt, light_src2, light_col);
+                        hitinfo[y*img_width + x].rgb = hitinfo[y*img_width + x].shade.get_int();
+                        hitinfo[y*img_width + x].ref_ray = reflect(hitinfo[y*img_width + x].ray_, hitinfo[y*img_width + x].normal);
+                    }
+
+                }
+                else if(hits){
+                    hitinfo[y*img_width + x].ishitting = true;
+                    hitinfo[y*img_width + x].intersection_pt = (*cb).get_int_pt();
+                    hitinfo[y*img_width + x].dist = hitinfo[y*img_width + x].intersection_pt.norm();
+                    hitinfo[y*img_width + x].normal = (*cb).normal(hitinfo[y*img_width + x].intersection_pt);
+                    hitinfo[y*img_width + x].shade = lighting((*cb).mat(), hitinfo[y*img_width + x].ray_, hitinfo[y*img_width + x].normal, hitinfo[y*img_width + x].intersection_pt, light_src, light_col);
+                    hitinfo[y*img_width + x].shade += lighting((*cb).mat(), hitinfo[y*img_width + x].ray_, hitinfo[y*img_width + x].normal, hitinfo[y*img_width + x].intersection_pt, light_src2, light_col);
+                    hitinfo[y*img_width + x].rgb = hitinfo[y*img_width + x].shade.get_int();
+                    hitinfo[y*img_width + x].ref_ray = reflect(hitinfo[y*img_width + x].ray_, hitinfo[y*img_width + x].normal);
+
 
                 }
             }
@@ -134,19 +168,38 @@ class Scene{
 
         void next_depth(int x, int y){
             std::vector<Sphere>::iterator sp;
+            std::vector<Cube>::iterator cb;
             for(sp = hitable_sphere.begin(); sp != hitable_sphere.end(); ++sp){
                 if(hitinfo[y*img_width + x].ishitting){
                 Intersection i_;
                 bool hits = i_.hit(*sp, hitinfo[y*img_width + x].ref_ray);
-                if (hitinfo[y*img_width + x].ishitting && hits){
+                if (hits){
                     if (hitinfo[y*img_width + x].dist > i_.dist_1()){
                         hitinfo[y*img_width + x].dist = i_.dist_1();
                         hitinfo[y*img_width + x].intersection_pt = hitinfo[y*img_width + x].ref_ray.fetch(hitinfo[y*img_width + x].dist); 
                         hitinfo[y*img_width + x].normal = (*sp).normal(hitinfo[y*img_width + x].intersection_pt);
                         hitinfo[y*img_width + x].shade_new = lighting((*sp).mat(), hitinfo[y*img_width + x].ref_ray, hitinfo[y*img_width + x].normal, hitinfo[y*img_width + x].intersection_pt, light_src, light_col);
+                        hitinfo[y*img_width + x].shade_new = lighting((*sp).mat(), hitinfo[y*img_width + x].ref_ray, hitinfo[y*img_width + x].normal, hitinfo[y*img_width + x].intersection_pt, light_src2, light_col);
                         hitinfo[y*img_width + x].ref_ray = reflect(hitinfo[y*img_width + x].ray_, hitinfo[y*img_width + x].normal);
                         }
                 }
+                }
+            }
+
+            for(cb = hitable_cube.begin(); cb != hitable_cube.end(); ++cb){
+                if(hitinfo[y*img_width + x].ishitting){
+                bool hits = (*cb).hit(hitinfo[y*img_width + x].ray_);
+                    if (hits){
+                        float d = (*cb).get_int_pt().norm();
+                        if (hitinfo[y*img_width + x].dist>d){
+                            hitinfo[y*img_width + x].intersection_pt = (*cb).get_int_pt();
+                            hitinfo[y*img_width + x].dist = d;
+                            hitinfo[y*img_width + x].normal = (*cb).normal(hitinfo[y*img_width + x].intersection_pt);
+                            hitinfo[y*img_width + x].shade_new = lighting((*cb).mat(), hitinfo[y*img_width + x].ray_, hitinfo[y*img_width + x].normal, hitinfo[y*img_width + x].intersection_pt, light_src, light_col);
+                            hitinfo[y*img_width + x].ref_ray = reflect(hitinfo[y*img_width + x].ray_, hitinfo[y*img_width + x].normal);
+                        }
+                    }
+
                 }
             }
         }

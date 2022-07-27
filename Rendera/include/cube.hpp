@@ -58,6 +58,7 @@ private:
     vec3 m_position;
     vec3 m_a, m_b, m_c;
     Material m_material;
+    vec3 int_pt;
     const double m_epsilon = 1e-5;
 
 public:
@@ -180,7 +181,7 @@ public:
         (all occurences are referenced when traversing along the ray direction)
     */
 
-    HitInfo hit(const ray &r, int recursion_depth)
+    bool hit(const ray &r)
     {
         vec3 temp_a = plane_intersect(cross(m_b, m_c), m_position, r);
         vec3 temp_b = plane_intersect(cross(m_b, m_c), m_position + m_a, r);
@@ -200,19 +201,32 @@ public:
         // if the ray is outside the cube amin comes after amax when going along the ray
         if(dot((amin-r.get_origin()),r.get_direction())>dot((amax-r.get_origin()),r.get_direction()))
         {
-            return {false, vec3(0,0,0), m_material, r, recursion_depth};
+            // return {false, vec3(0,0,0), m_material, r, recursion_depth};
+            return false;
+
         }
         else if(dot(r.get_direction(),amax - r.get_origin())<0 )    // checks if both intersection are behind the r.origin
         {
-            return {false, vec3(0,0,0), m_material, r, recursion_depth};
+            // return {false, vec3(0,0,0), m_material, r, recursion_depth};
+            return false;
         }
         else if(dot(r.get_direction(),amin - r.get_origin())<0)     // checks if r.origin is inside the cube
         {
-            return {true, amax, m_material, r, recursion_depth-1};
+            // return {true, amax, m_material, r, recursion_depth-1};
+            int_pt = amax;
+            return true;
         }
         
-        return {true, amin, m_material, r, recursion_depth-1};     // if two intersections, returns the closest one
+        // return {true, amin, m_material, r, recursion_depth-1};     // if two intersections, returns the closest one
+        int_pt = amin;
+        return true;
         
+    }
+    vec3 get_int_pt(){
+        return int_pt;
+    }
+    Material mat(){
+        return m_material;
     }
 };
 
