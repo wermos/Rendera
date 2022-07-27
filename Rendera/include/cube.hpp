@@ -7,6 +7,23 @@
 #include "ray.hpp"
 #include "material.hpp"
 
+
+//debug
+class HitInfo{
+    bool if_hit;
+    vec3 dist_v;
+    Material mat;
+    ray r;
+    int depth;
+
+    public:
+        HitInfo(bool if_hit, vec3 v, Material m, ray r, int d):if_hit{if_hit}, dist_v{v}, mat{m}, r{r}, depth{d}{};
+
+};
+
+
+//
+
 // checks which point is farther going along the ray 
 vec3 max(vec3 a, vec3 b, ray r)
 {
@@ -41,7 +58,7 @@ private:
     vec3 m_position;
     vec3 m_a, m_b, m_c;
     Material m_material;
-    static const double m_epsilon = 1e-5;
+    const double m_epsilon = 1e-5;
 
 public:
     Cube(vec3 position, vec3 a, vec3 b, vec3 c, Material mat) : m_position{position}, m_a{a}, m_b{b}, m_c{c}, m_material{mat} {};

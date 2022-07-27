@@ -4,7 +4,7 @@
 #include "sphere.hpp"
 #include "intersection.hpp"
 #include "camera.hpp"
-
+#include "cube.hpp"
 class Hitinfo{
     public:
         bool ishitting = false;
@@ -16,6 +16,7 @@ class Hitinfo{
         color shade_new = {0,0,0};
         color rgb;
         ray ref_ray;
+    Hitinfo() = default;
 };
 
 color lighting(Material mat, ray cam_ray, ray normal, vec3 point, vec3 light_src, color intensity){
@@ -54,11 +55,13 @@ color lighting(Material mat, ray cam_ray, ray normal, vec3 point, vec3 light_src
 
 class Scene{
     public:
-        int n_sphere;
+        int n_sphere = 1;
+        int n_cube = 0;
         uint16_t img_width;
         uint16_t img_height;
         Hitinfo *hitinfo = new Hitinfo[img_height*img_width];
-        sphere *hitable_sphere = new sphere[n_sphere];
+        std::vector<Sphere> hitable_sphere;
+        std::vector<Cube> hitable_cube;
 
 
         vec3 light_src = {-5,3,5};
@@ -85,29 +88,33 @@ class Scene{
 
         }
         ~Scene(){
-            delete hitable_sphere;
             delete hitinfo;
         }
-        void set_sphere(int index, vec3 center, float radius, Material mat){
-            if (index < n_sphere)
-                hitable_sphere[index] = sphere(center, radius, mat);
-            else
-                std::cout<<"accessing wrong index"<<std::endl;
+        void add_sphere(vec3 center, float radius, Material mat){
+            n_sphere++;
+            hitable_sphere.push_back(Sphere(center, radius, mat));
+        }
+        void add_cube(vec3 position, vec3 a, vec3 b, vec3 c, Material mat){
+            n_cube++;
+            hitable_cube.push_back(Cube(position, a, b, c, mat));
         }
 
 
 
         void hit_object(int x, int y){
-            hitinfo[y*img_width + x].ray_ = ray(cam.get_ray(x, y));
-            for(int i = 0; i < n_sphere; i++){
+            std::vector<Sphere>::iterator sp;
+            std::vector<Cube>::iterator cb;
+            hitinfo[y*img_width + x].ray_ = cam.get_ray(x, y);
+            // std::cout<<cam.get_ray(x, y).get_direction();
+            for(sp = hitable_sphere.begin(); sp != hitable_sphere.end(); ++sp){
                 Intersection i_;
-                bool hits = i_.hit(hitable_sphere[i], hitinfo[y*img_width + x].ray_);
+                bool hits = i_.hit(*sp, hitinfo[y*img_width + x].ray_);
                 if (hitinfo[y*img_width + x].ishitting && hits){
                     if (hitinfo[y*img_width + x].dist > i_.dist_1()){
                         hitinfo[y*img_width + x].dist = i_.dist_1();
                         hitinfo[y*img_width + x].intersection_pt = hitinfo[y*img_width + x].ray_.fetch(hitinfo[y*img_width + x].dist); 
-                        hitinfo[y*img_width + x].normal = hitable_sphere[i].normal(hitinfo[y*img_width + x].intersection_pt);
-                        hitinfo[y*img_width + x].shade = lighting(hitable_sphere[i].mat(), hitinfo[y*img_width + x].ray_, hitinfo[y*img_width + x].normal, hitinfo[y*img_width + x].intersection_pt, light_src, light_col);
+                        hitinfo[y*img_width + x].normal = (*sp).normal(hitinfo[y*img_width + x].intersection_pt);
+                        hitinfo[y*img_width + x].shade = lighting((*sp).mat(), hitinfo[y*img_width + x].ray_, hitinfo[y*img_width + x].normal, hitinfo[y*img_width + x].intersection_pt, light_src, light_col);
                         hitinfo[y*img_width + x].rgb = hitinfo[y*img_width + x].shade.get_int();
                         hitinfo[y*img_width + x].ref_ray = reflect(hitinfo[y*img_width + x].ray_, hitinfo[y*img_width + x].normal);
                         }
@@ -116,8 +123,8 @@ class Scene{
                     hitinfo[y*img_width + x].ishitting = true;
                     hitinfo[y*img_width + x].dist = i_.dist_1();
                     hitinfo[y*img_width + x].intersection_pt = hitinfo[y*img_width + x].ray_.fetch(hitinfo[y*img_width + x].dist); 
-                    hitinfo[y*img_width + x].normal = hitable_sphere[i].normal(hitinfo[y*img_width + x].intersection_pt);
-                    hitinfo[y*img_width + x].shade = lighting(hitable_sphere[i].mat(), hitinfo[y*img_width + x].ray_, hitinfo[y*img_width + x].normal, hitinfo[y*img_width + x].intersection_pt, light_src, light_col);
+                    hitinfo[y*img_width + x].normal = (*sp).normal(hitinfo[y*img_width + x].intersection_pt);
+                    hitinfo[y*img_width + x].shade = lighting((*sp).mat(), hitinfo[y*img_width + x].ray_, hitinfo[y*img_width + x].normal, hitinfo[y*img_width + x].intersection_pt, light_src, light_col);
                     hitinfo[y*img_width + x].rgb = hitinfo[y*img_width + x].shade.get_int();
                     hitinfo[y*img_width + x].ref_ray = reflect(hitinfo[y*img_width + x].ray_, hitinfo[y*img_width + x].normal);
 
@@ -126,16 +133,17 @@ class Scene{
         }
 
         void next_depth(int x, int y){
-            for(int i = 0; i < n_sphere; i++){
+            std::vector<Sphere>::iterator sp;
+            for(sp = hitable_sphere.begin(); sp != hitable_sphere.end(); ++sp){
                 if(hitinfo[y*img_width + x].ishitting){
                 Intersection i_;
-                bool hits = i_.hit(hitable_sphere[i], hitinfo[y*img_width + x].ref_ray);
+                bool hits = i_.hit(*sp, hitinfo[y*img_width + x].ref_ray);
                 if (hitinfo[y*img_width + x].ishitting && hits){
                     if (hitinfo[y*img_width + x].dist > i_.dist_1()){
                         hitinfo[y*img_width + x].dist = i_.dist_1();
                         hitinfo[y*img_width + x].intersection_pt = hitinfo[y*img_width + x].ref_ray.fetch(hitinfo[y*img_width + x].dist); 
-                        hitinfo[y*img_width + x].normal = hitable_sphere[i].normal(hitinfo[y*img_width + x].intersection_pt);
-                        hitinfo[y*img_width + x].shade_new = lighting(hitable_sphere[i].mat(), hitinfo[y*img_width + x].ref_ray, hitinfo[y*img_width + x].normal, hitinfo[y*img_width + x].intersection_pt, light_src, light_col);
+                        hitinfo[y*img_width + x].normal = (*sp).normal(hitinfo[y*img_width + x].intersection_pt);
+                        hitinfo[y*img_width + x].shade_new = lighting((*sp).mat(), hitinfo[y*img_width + x].ref_ray, hitinfo[y*img_width + x].normal, hitinfo[y*img_width + x].intersection_pt, light_src, light_col);
                         hitinfo[y*img_width + x].ref_ray = reflect(hitinfo[y*img_width + x].ray_, hitinfo[y*img_width + x].normal);
                         }
                 }
@@ -147,12 +155,10 @@ class Scene{
             for(int x=0; x<img_width; x++){
                 for(int y=0; y<img_height; y++){
                     hit_object(x,y);
-                    // hitinfo[y*img_width + x].ishitting = false;
                     next_depth(x,y);
                     hitinfo[y*img_width + x].shade += hitinfo[y*img_width + x].shade_new;
                     hitinfo[y*img_width + x].shade_new = {0,0,0};
                     hitinfo[y*img_width + x].rgb = hitinfo[y*img_width + x].shade.get_int();
-                    // next_depth(x,y);
                     next_depth(x,y);
                     hitinfo[y*img_width + x].shade += hitinfo[y*img_width + x].shade_new;
                     hitinfo[y*img_width + x].shade_new = {0,0,0};

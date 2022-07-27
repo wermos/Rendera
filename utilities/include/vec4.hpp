@@ -7,7 +7,6 @@
 #include <type_traits> // for std::is_constant_evaluated
 
 #include <xsimd/xsimd.hpp>
-
 #include "config.hpp"
 /*  *Macros provided by config.hpp
     - ALIGN_WIDTH: Alignment width for class, since it is dependent on Arch.
@@ -59,15 +58,14 @@ class alignas(ALIGN_WIDTH) vec4{
                 return sum(temp);
             }
         }
-        
-        CONSTEXPR_CMATH Utype norm() const{
+        constexpr Utype norm() const{
             return std::sqrt(dot(*this,*this));
         }
 
-        CONSTEXPR_CMATH Utype angle(const vec4& v1,const vec4& v2){
+        constexpr Utype angle(const vec4& v1,const vec4& v2){
             return std::acos(dot(v1,v2)/(v1.norm()*v2.norm()));
         }
-        CONSTEXPR_CMATH vec4 unit() const{
+        constexpr vec4 unit() const{
             return *this/this->norm();
         }
 
