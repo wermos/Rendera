@@ -4,16 +4,8 @@
 #include "camera.hpp"
 #include "sphere.hpp"
 #include "intersection.hpp"
-#include <fstream>
-#include <cmath>
-#include <random>
 #include <iostream>
-#include <sstream>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-
-#define STBI_MSC_SECURE_CRT
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
@@ -37,8 +29,6 @@ color lighting(Material mat, ray cam_ray, ray normal, vec3 point, vec3 light_src
     if (diffuse_cosine >= 0){
         diffuse_col = diffuse_cosine * effective_col * mat.dif();
     }
-
-    
 
     float specular_cosine = dot(-cam_ray.get_direction(), reflect_ray.get_direction());
     float spec_factor = 0;
@@ -86,9 +76,7 @@ int main(){
                 bool hits = i.hit(s,ray_1);
                 color temp_shade = {1,1,1};
 
-
                     if(hits){
-
                         vec3 hit_point = ray_1.fetch(i.dist_1()); 
                         temp_shade = lighting(s.mat(), ray_1, s.normal(hit_point),hit_point,light_src, light_col);
                     }
@@ -105,11 +93,9 @@ int main(){
         }
     }
     
-    stbi_write_png("Spherepng.png", img_width, img_height, 3, pixels, img_width * 3);
+    stbi_write_png("Sphere.png", img_width, img_height, 3, pixels, img_width * 3);
 
-    stbi_write_jpg("Spherejpg3.jpg", img_width, img_height, 3, pixels, 100);
+    stbi_write_jpg("Sphere.jpg", img_width, img_height, 3, pixels, 100);
     delete[] pixels;
-    pixels = nullptr;
-    
     return 0;
 }
