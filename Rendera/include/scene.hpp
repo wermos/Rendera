@@ -55,8 +55,8 @@ color lighting(Material mat, ray cam_ray, ray normal, vec3 point, vec3 light_src
 class Scene{
     public:
         int n_sphere;
-        int img_width;
-        int img_height;
+        uint16_t img_width;
+        uint16_t img_height;
         Hitinfo *hitinfo = new Hitinfo[img_height*img_width];
         sphere *hitable_sphere = new sphere[n_sphere];
 
@@ -80,7 +80,7 @@ class Scene{
 
 
     public:
-        Scene(int n_sphere_, int img_height_, int img_width_):n_sphere {n_sphere_}, img_height {img_height_},img_width {img_width_} {
+        Scene(int n_sphere_, uint16_t img_height_, uint16_t img_width_):n_sphere {n_sphere_}, img_height {img_height_},img_width {img_width_} {
                     cam = Camera(cam_origin, port_width, port_height, img_width, img_height, focal_length);
 
         }

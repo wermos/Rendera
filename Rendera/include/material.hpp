@@ -11,7 +11,7 @@ class Material{
     float shininess;
 
     public:
-        Material(){}
+        Material() = default;
         Material(color _Color, float _ambient, float _diffuse, float _specular, float _shininess):
         col {_Color},
         ambient {_ambient},

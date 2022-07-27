@@ -15,8 +15,8 @@
 
 int main(){
     int n_sphere = 3;
-    int img_width = 500;
-    int img_height = 500;
+    int img_width = 5000;
+    int img_height = 5000;
 
     vec3 center = {3,-2,0};
     vec3 center1 = {3, 1, 0};
