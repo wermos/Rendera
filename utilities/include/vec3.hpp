@@ -2,6 +2,7 @@
 #define VEC3_HPP
 
 #include <cmath>
+#include <ostream>
 #include <type_traits> // for std::is_constant_evaluated
 
 #include <xsimd/xsimd.hpp>
@@ -36,13 +37,13 @@ class alignas(ALIGN_WIDTH) vec3 : public vec4{
         constexpr explicit vec3(xsimd::batch<Utype,UArch> x) : vec4{x} {}
         
         // cross-product
-        constexpr vec3 cross(const vec3& v2) const{
+        friend constexpr vec3 cross(const vec3& v1,const vec3& v2){
             if (std::is_constant_evaluated()){
-                return vec3((*this).y()*v2.z() - (*this).z()*v2.y(),
-                            (*this).z()*v2.x() - (*this).x()*v2.z(),
-                            (*this).x()*v2.y() - (*this).y()*v2.x());
+                return vec3(v1.y()*v2.z() - v1.z()*v2.y(),
+                            v1.z()*v2.x() - v1.x()*v2.z(),
+                            v1.x()*v2.y() - v1.y()*v2.x());
             } else {    
-                xsimd::batch<Utype,UArch> B0 = vec2batch(*this); 
+                xsimd::batch<Utype,UArch> B0 = vec2batch(v1); 
                 xsimd::batch<Utype,UArch> B1= vec2batch(v2);
                 
                 //create a appropriate mask for cross product.
@@ -57,6 +58,12 @@ class alignas(ALIGN_WIDTH) vec3 : public vec4{
                 return vec3{xsimd::swizzle(temp0-temp1,shuffler)};
             }
         }
+
+        // print the vector
+        friend std::ostream& operator<<(std::ostream& out, const vec3& v) {            
+            out <<'('<< v[0] << ',' << v[1] << ',' << v[2]<<')';
+            return out;
+		}
 
 };
 
