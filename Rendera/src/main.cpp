@@ -4,7 +4,6 @@
 #include "camera.hpp"
 #include "sphere.hpp"
 #include "intersection.hpp"
-#include <iostream>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
@@ -94,8 +93,9 @@ int main(){
     }
     
     stbi_write_png("Sphere.png", img_width, img_height, 3, pixels, img_width * 3);
-
+    std::cout<<"PNG image generated\n";
     stbi_write_jpg("Sphere.jpg", img_width, img_height, 3, pixels, 100);
+    std::cout<<"JPG image generated\n";
     delete[] pixels;
     return 0;
 }
