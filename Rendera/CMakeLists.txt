@@ -8,5 +8,6 @@ add_executable(Rendera ${SOURCES})
 target_include_directories(Rendera PUBLIC include)
 
 target_link_libraries(Rendera PUBLIC utilities)
+target_include_directories(Rendera PUBLIC ../shared)
 
 
