@@ -43,7 +43,6 @@ int main(){
     // Jpeg and png
     // Making an array of such size as there are width*height pixels and each pixel has 3 RGB values.
     std::uint8_t* pixels = new std::uint8_t[img_width * img_height * 3]; 
-    int numSamples = 50;
     int index = 0;  //Index of the array containing RGB values of image for the current pixel
     std::ofstream image("sphere.ppm");
     image << "P3\n";
