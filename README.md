@@ -23,4 +23,4 @@ To build the project and run locally,
 
 ```bash
 -DCMAKE_CXX_COMPILER=gcc-11  //use this flag if gcc is not default
-```bash
+```
