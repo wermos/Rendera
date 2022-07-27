@@ -12,4 +12,5 @@ add_library(utilities ${SOURCES})
 
 target_include_directories(utilities PUBLIC include)
 target_include_directories(utilities PUBLIC libs/xsimd/include)
+target_include_directories(utilities PUBLIC libs/stb)
 target_include_directories(utilities PUBLIC ../shared)
