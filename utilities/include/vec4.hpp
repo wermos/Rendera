@@ -22,7 +22,7 @@ class alignas(ALIGN_WIDTH) vec4{
         constexpr vec4() : m_v{0,0,0,0} {}
         constexpr explicit vec4(Utype x) : m_v{x,x,x,x} {}
         constexpr vec4(Utype x,Utype y,Utype z,Utype w) : m_v{x,y,z,w} {}
-        constexpr explicit vec4(xsimd::batch<Utype,UArch> x) : m_v{0,0,0,0} {store_aligned(m_v,x);}
+        explicit vec4(xsimd::batch<Utype,UArch> x){store_aligned(m_v,x);}
         
         //getters
         constexpr Utype x() const{
