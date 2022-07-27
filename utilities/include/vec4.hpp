@@ -64,7 +64,7 @@ class alignas(ALIGN_WIDTH) vec4{
             return std::sqrt(dot(*this,*this));
         }
 
-        CONSTEXPR_CMATH static Utype angle(const vec4& v1,const vec4& v2){
+        CONSTEXPR_CMATH Utype angle(const vec4& v1,const vec4& v2){
             return std::acos(dot(v1,v2)/(v1.norm()*v2.norm()));
         }
         CONSTEXPR_CMATH vec4 unit() const{
