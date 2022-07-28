@@ -12,8 +12,8 @@ class Camera{
     vec3 origin;
     float port_width;
     float port_height;
-    int img_width;
-    int img_height;
+    std::size_t img_width;
+    std::size_t img_height;
     float focal_length;
     //viewport screen at (x = focal_length) (viewing direction is +X)
 

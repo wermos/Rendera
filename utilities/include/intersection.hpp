@@ -26,24 +26,17 @@ class Intersection{
             if(disc >= 0){
                 t_1 = (-beta - sqrt(disc))/(2 * alpha);
                 t_2 = (-beta + sqrt(disc))/(2 * alpha);
+                return t_2 >= 0;
             }
 
             //only positive hits
-            return (disc>=0) && (t_2 >=0);
+            return false;
         }
 
 
 
         //getters
         
-        float dist_1() const{
-            return t_1;
-        }
-
-        float dist_2() const{
-            return t_2;
-        }
-
 };
 
 #endif

@@ -23,10 +23,10 @@ color lighting(Material mat, ray cam_ray, ray normal, vec3 point, vec3 light_src
     ray incident_ray = {point, point - light_src};
     ray reflect_ray = reflect(incident_ray, normal);
 
-    color effective_col = mat.Color() * intensity;
+    color effective_col = mat.col * intensity;
 
     //determine ambient contribution
-    color ambient_col = effective_col * mat.amb();
+    color ambient_col = effective_col * mat.ambient;
 
     
     //determine diffuse contribution, using Lambert's cosine law
@@ -36,7 +36,7 @@ color lighting(Material mat, ray cam_ray, ray normal, vec3 point, vec3 light_src
     // float lambert_cosine = dot(-cam_ray.get_direction(), normal.get_direction());
 
     if (diffuse_cosine >= 0){
-        diffuse_col = diffuse_cosine * effective_col * mat.dif();
+        diffuse_col = diffuse_cosine * effective_col * mat.diffuse;
     }
 
     
@@ -45,9 +45,9 @@ color lighting(Material mat, ray cam_ray, ray normal, vec3 point, vec3 light_src
     float spec_factor = 0;
 
     if(specular_cosine >= 0){
-        spec_factor = pow(specular_cosine, mat.shiny());
+        spec_factor = pow(specular_cosine, mat.shininess;
     }
-    color specular_col = spec_factor * intensity * mat.spe();
+    color specular_col = spec_factor * intensity * mat.specular;
 
     return ambient_col + diffuse_col + specular_col;
 }
