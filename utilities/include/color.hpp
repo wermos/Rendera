@@ -27,9 +27,10 @@ class color{
 
         //return 8 bit int values
         constexpr color get_int() const{
-            int R = (r > 1.0) ? 255 : std::max(0, static_cast<int>(255*r));
-            int B = (b > 1.0) ? 255 : std::max(0, static_cast<int>(255*b));
-            int G = (g > 1.0) ? 255 : std::max(0, static_cast<int>(255*g));
+            // std:max to clamp negative values to 0 
+            std::uint8_t R = (r > 1.0) ? 255 : std::max(0, static_cast<int>(255*r));
+            std::uint8_t B = (b > 1.0) ? 255 : std::max(0, static_cast<int>(255*b));
+            std::uint8_t G = (g > 1.0) ? 255 : std::max(0, static_cast<int>(255*g));
             return {R, G, B};
         }
 
