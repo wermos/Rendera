@@ -1,6 +1,7 @@
 #ifndef COLOR_HPP
 #define COLOR_HPP
 
+#include <cstddef>
 #include "vec3.hpp"
 
 class color{
@@ -28,9 +29,9 @@ class color{
         //return 8 bit int values
         constexpr color get_int() const{
             // std:max to clamp negative values to 0 
-            std::uint8_t R = static_cast<uint8_t>((r > 1.0) ? 255 : static_cast<int>(255*r));
-            std::uint8_t B = static_cast<uint8_t>((b > 1.0) ? 255 : static_cast<int>(255*b));
-            std::uint8_t G = static_cast<uint8_t>((g > 1.0) ? 255 : static_cast<int>(255*g));
+            std::uint8_t R = (r > 1.0) ? 255 : static_cast<std::uint8_t>(255*r);
+            std::uint8_t B = (b > 1.0) ? 255 : static_cast<std::uint8_t>(255*b);
+            std::uint8_t G = (g > 1.0) ? 255 : static_cast<std::uint8_t>(255*g);
             return {R, G, B};
         }
 
