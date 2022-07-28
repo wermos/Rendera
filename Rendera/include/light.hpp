@@ -23,4 +23,30 @@ class Ambient : public Light {
             return Col;
         }
 };
+
+class Directional : public Light {
+    private:
+        color Col;
+        ray dir;
+    
+    public:
+        virtual ray get_direction(vec3 hit_point){
+            return dir;
+        }
+
+        virtual color L(vec3 hit_point){
+            return Col;
+        }
+};
+
+class PointLight : public Light {
+    private:
+        color Col;
+        vec3 position;
+    
+    public:
+        virtual ray get_direction(vec3 hit_point){
+            return {hit_point,(hit_point - position)};
+        }
+};
 #endif
