@@ -20,3 +20,7 @@ To build the project and run locally,
     cmake --build build
     ./build/Rendera/Rendera
 ```
+
+```bash
+cmake -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_C_COMPILER=gcc-11 -S. -Bbuild -DCMAKE_BUILD_TYPE=Release
+```

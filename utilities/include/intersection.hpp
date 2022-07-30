@@ -10,13 +10,12 @@ class Intersection{
     float t_2;
 
     public:
-        bool hit(const sphere &s, const ray &ray_1){
+        bool hit(const Sphere &s, const ray &ray_1){
             //make a quadratic equation in t
             vec3 a = ray_1.get_direction();
             vec3 b = ray_1.get_origin();
             vec3 c = s.c();
             float radius = s.r();
-
             float alpha = a.norm()*a.norm(); //tsquare coeff
             float beta = 2*dot(a,b-c); //t coeff
             float gamma = (b-c).norm()*(b-c).norm() - radius*radius; //constant

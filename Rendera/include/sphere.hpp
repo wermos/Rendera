@@ -6,14 +6,14 @@
 #include "color.hpp"
 #include "material.hpp"
 
-class sphere{
+class Sphere{
     vec3 center;
     float radius;
     Material material;
 
     public:
-        sphere(){}
-        sphere(vec3 Center, float Radius, Material mat): center {Center}, radius {Radius}, material {mat} {}
+        Sphere(){}
+        Sphere(vec3 Center, float Radius, Material mat): center {Center}, radius {Radius}, material {mat} {}
 
         //surface normal function, returns ray along outward normal
         ray normal(vec3 point){
