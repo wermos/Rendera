@@ -22,5 +22,5 @@ To build the project and run locally,
 ```
 
 ```bash
--DCMAKE_CXX_COMPILER=gcc-11  //use this flag if gcc is not default
+cmake -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_C_COMPILER=gcc-11 -S. -Bbuild -DCMAKE_BUILD_TYPE=Release
 ```
